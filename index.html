@@ -65,7 +65,7 @@
             width: 180px; 
             height: auto;
             margin-bottom: 10px;
-            mix-blend-mode: multiply; 
+            /* mix-blend-mode: multiply; Buang ini jika logo sudah transparent */
             filter: contrast(1.1);
             transition: transform 0.3s ease;
         }
@@ -608,7 +608,7 @@
 <div class="container">
     <div class="header">
         <!-- Logo Utama Ditambah -->
-        <img src="https://i.imgur.com/PVu4T7c.png" alt="Logo PPD Club" class="main-logo">
+        <img src="https://i.postimg.cc/3JqzZXqd/TRANSPARENT-BACK-GROUND.png" alt="Logo PPD Club" class="main-logo">
         
         <h2>Pendaftaran Keahlian PPD CLUB</h2>
         <p>PEJABAT PENDIDIKAN DAERAH MIRI</p>
@@ -882,7 +882,7 @@
             <div class="card-header">
                 <!-- Logo ditambah ke dalam Kad Keahlian -->
                 <div class="card-brand">
-                    <img src="https://i.imgur.com/PVu4T7c.png" alt="Logo" class="card-logo-img">
+                    <img src="https://i.postimg.cc/3JqzZXqd/TRANSPARENT-BACK-GROUND.png" alt="Logo" class="card-logo-img">
                     <div class="card-logo">PPD CLUB MIRI</div>
                 </div>
                 <div class="card-subtitle">PREMIUM MEMBER</div>
@@ -914,10 +914,16 @@
                         </div>
                     </div>
 
-                    <!-- NO. KEAHLIAN FIELD (UPDATED) -->
-                    <div class="card-field">
-                        <div class="card-label">NO. KEAHLIAN / MEMBERSHIP NO</div>
-                        <div class="card-value" id="cardMemberID" style="color: #FFD700; letter-spacing: 1px;">-</div>
+                    <!-- Row untuk Tarikh Keahlian & No. Keahlian -->
+                    <div style="display: flex; justify-content: space-between;">
+                        <div class="card-field">
+                            <div class="card-label">TARIKH KEAHLIAN / JOIN DATE</div>
+                            <div class="card-value" id="cardJoinDate" style="font-size:0.9em;">-</div>
+                        </div>
+                        <div class="card-field" style="text-align: right;">
+                            <div class="card-label">NO. KEAHLIAN / MEMBER NO</div>
+                            <div class="card-value" id="cardMemberID" style="color: #FFD700; letter-spacing: 1px;">-</div>
+                        </div>
                     </div>
 
                     <div class="card-field">
@@ -977,7 +983,7 @@
     const hiddenClubDuration = document.getElementById('hidden_club_duration');
     const icCheckLoader = document.getElementById('icCheckLoader');
     
-    // ImgBB API Key Variable - UPDATED
+    // ImgBB API Key Variable
     const imgbbAPIKey = 'a7c600ac733fe14649cacd8e65619c4b'; 
 
     // Global Vars for Edit Mode
@@ -1287,6 +1293,17 @@
         }
     }
 
+    // Function to format date from YYYY-MM-DD to DD/MM/YYYY
+    function formatDate(dateString) {
+        if (!dateString) return "-";
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString;
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
     // --- CHECK MEMBERSHIP LOGIC ---
     window.checkMembership = async function() {
         const checkIC = document.getElementById('check_ic').value.replace(/[^0-9]/g, '');
@@ -1311,7 +1328,8 @@
                 document.getElementById('cardJawatan').innerText = foundData.jawatan;
                 document.getElementById('cardDuration').innerText = foundData.tempoh_keahlian_club || "1 TAHUN";
                 document.getElementById('cardBarcode').innerText = "*" + foundData.ic + "*";
-                document.getElementById('cardMemberID').innerText = foundData.no_keahlian || "BELUM DITETAPKAN"; // Papar No. Keahlian
+                document.getElementById('cardMemberID').innerText = foundData.no_keahlian || "BELUM DITETAPKAN"; 
+                document.getElementById('cardJoinDate').innerText = formatDate(foundData.tarikh_mula); // Show Join Date
 
                 // Handle Photo in Card
                 const cardPhoto = document.getElementById('cardUserPhoto');
@@ -1385,6 +1403,7 @@
         document.getElementById('cardDuration').innerText = clubDuration || "BARU MENDAFTAR";
         document.getElementById('cardBarcode').innerText = "*" + ic + "*";
         document.getElementById('cardMemberID').innerText = "BARU / PENDING";
+        document.getElementById('cardJoinDate').innerText = formatDate(startDate); // Show Join Date
         
         // Handle Photo Preview in Card
         const cardPhoto = document.getElementById('cardUserPhoto');
