@@ -42,7 +42,7 @@
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 1200px;
+            max-width: 1300px; /* Lebar ditambah */
             margin: 0 auto;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.5);
@@ -165,13 +165,14 @@
             width: 100%;
             border-collapse: collapse;
             background: white;
-            min-width: 800px;
+            min-width: 900px;
         }
 
         th, td {
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
         }
 
         th {
@@ -181,9 +182,46 @@
             text-transform: uppercase;
             font-size: 0.85em;
             letter-spacing: 0.5px;
+            cursor: pointer; /* Menunjukkan boleh klik */
+            user-select: none;
+        }
+        
+        th:hover {
+            background-color: #e9ecef;
+            color: var(--primary-color);
         }
 
         tr:hover { background-color: #f1f5f9; }
+
+        /* Avatar / Foto */
+        .table-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #eee;
+            background-color: #f0f0f0;
+        }
+
+        /* Membership Input */
+        .member-id-input {
+            width: 120px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 0.9em;
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary-color);
+            transition: all 0.3s;
+        }
+        
+        .member-id-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            background-color: #f0f8ff;
+            box-shadow: 0 0 5px rgba(0,51,153,0.3);
+        }
 
         /* Status Badges */
         .badge {
@@ -299,11 +337,12 @@
                     <th style="width: 40px; text-align: center;">
                         <input type="checkbox" id="selectAll" class="custom-checkbox" onchange="toggleSelectAll()">
                     </th>
-                    <th>Nama Ahli</th>
-                    <th>No. IC</th>
-                    <th>Jawatan & Sektor</th>
-                    <th>Tempoh</th>
-                    <th>Status</th>
+                    <th style="width: 70px;">Foto</th>
+                    <th onclick="sortTable('nama')">Nama Ahli <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable('ic')">No. IC (Masked) <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable('jawatan')">Jawatan & Sektor <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable('no_keahlian')" style="width: 150px; background-color: #e3f2fd;">No. Keahlian <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable('status')">Status <i class="fas fa-sort"></i></th>
                     <th style="text-align: center;">Tindakan</th>
                 </tr>
             </thead>
@@ -320,7 +359,7 @@
     import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // --- FIREBASE CONFIGURATION (Sama seperti Portal Pengguna) ---
+    // --- FIREBASE CONFIGURATION ---
     const firebaseConfig = {
       apiKey: "AIzaSyAZC1WyqVSlicy4jRIZyIFmx2rjlrbtfus",
       authDomain: "ppdclub-e9f2a.firebaseapp.com",
@@ -331,16 +370,16 @@
     };
 
     // Initialize Firebase
-    let app, auth, db;
+    let db;
     let currentUser = null;
-    let allData = []; // Simpan data tempatan untuk carian pantas
+    let allData = []; // Simpan data tempatan
+    let currentSort = { key: 'status', order: 'asc' }; // Simpan state susunan semasa
 
     try {
-        app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         db = getFirestore(app);
 
-        // Auto login anonymous untuk admin
         signInAnonymously(auth).catch((error) => {
             console.error("Auth Error:", error);
             document.getElementById('connectionStatus').innerText = "Ralat Auth";
@@ -352,7 +391,7 @@
                 currentUser = user;
                 document.getElementById('connectionStatus').innerText = "Online";
                 document.getElementById('connectionStatus').style.color = "green";
-                loadData(); // Muat turun data bila dah login
+                loadData(); 
             }
         });
 
@@ -373,10 +412,9 @@
         
         loader.style.display = 'block';
         table.style.opacity = '0.5';
-        tbody.innerHTML = ''; // Kosongkan jadual
+        tbody.innerHTML = ''; 
 
         try {
-            // Gunakan koleksi root 'ppd_registrations'
             const querySnapshot = await getDocs(collection(db, 'ppd_registrations'));
             
             allData = [];
@@ -386,10 +424,9 @@
 
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
-                data.id = doc.id; // Simpan ID dokumen untuk update/delete
+                data.id = doc.id; 
                 allData.push(data);
 
-                // Kira statistik
                 if (data.status === 'DISAHKAN') {
                     approved++;
                 } else {
@@ -398,20 +435,42 @@
                 total++;
             });
 
-            // Update Statistik UI
             document.getElementById('totalCount').innerText = total;
             document.getElementById('pendingCount').innerText = pending;
             document.getElementById('approvedCount').innerText = approved;
 
+            // Sort data based on currentSort state
+            sortDataArray(allData, currentSort.key, currentSort.order);
             renderTable(allData);
 
         } catch (error) {
             console.error("Error loading data:", error);
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Gagal memuatkan data. Sila semak console untuk ralat.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">Gagal memuatkan data. Sila semak console untuk ralat.</td></tr>`;
         } finally {
             loader.style.display = 'none';
             table.style.opacity = '1';
         }
+    }
+
+    function maskIC(ic) {
+        if (!ic || ic.length < 12) return ic || '-';
+        return ic.substring(0, 6) + '-' + ic.substring(6, 8) + '-****';
+    }
+
+    // Fungsi Pembantu: Cari Nombor Keahlian Tertinggi Seterusnya
+    function getNextMembershipId() {
+        let maxId = 0;
+        allData.forEach(item => {
+            if (item.no_keahlian) {
+                const num = parseInt(item.no_keahlian, 10);
+                if (!isNaN(num) && num > maxId) {
+                    maxId = num;
+                }
+            }
+        });
+        const nextId = maxId + 1;
+        // Format ke 6 digit: 000001
+        return nextId.toString().padStart(6, '0');
     }
 
     // 2. Render Jadual
@@ -420,43 +479,54 @@
         tbody.innerHTML = '';
 
         if (dataArray.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px;">Tiada rekod ditemui.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px;">Tiada rekod ditemui.</td></tr>`;
             return;
         }
 
-        // Susun: Pending di atas, Approved di bawah (Sort)
-        dataArray.sort((a, b) => {
-            const statusA = a.status || '';
-            const statusB = b.status || '';
-            if (statusA === statusB) return 0;
-            return statusA === 'DISAHKAN' ? 1 : -1;
-        });
+        // Kira "Next ID" sekali sahaja untuk prestasi
+        const suggestionId = getNextMembershipId();
 
         dataArray.forEach((item) => {
             const isApproved = item.status === 'DISAHKAN';
             const statusBadge = isApproved 
                 ? `<span class="badge badge-approved">DISAHKAN</span>` 
-                : `<span class="badge badge-new">BARU / PENDING</span>`;
+                : `<span class="badge badge-new">BARU</span>`;
             
             const approveBtn = isApproved 
                 ? `<button class="btn-icon" style="background:#ccc; cursor:default;" title="Sudah Disahkan"><i class="fas fa-check"></i></button>`
                 : `<button class="btn-icon btn-check" onclick="verifySingle('${item.id}')" title="Sahkan Permohonan"><i class="fas fa-check"></i></button>`;
+
+            const photoUrl = item.foto_url ? item.foto_url : 'https://via.placeholder.com/50?text=USER';
+
+            // Jika belum ada ID, guna suggestion dalam placeholder
+            const currentIdVal = item.no_keahlian || '';
+            const placeholderVal = currentIdVal ? '' : suggestionId;
 
             const row = `
                 <tr id="row-${item.id}">
                     <td style="text-align: center;">
                         <input type="checkbox" class="select-row custom-checkbox" value="${item.id}" onchange="updateBulkButton()">
                     </td>
+                    <td style="text-align: center;">
+                        <img src="${photoUrl}" class="table-avatar" alt="Foto">
+                    </td>
                     <td>
                         <strong>${item.nama || '-'}</strong><br>
                         <small style="color:#888;">${item.phone || '-'}</small>
                     </td>
-                    <td>${item.ic || '-'}</td>
+                    <td style="font-family: monospace; font-size: 1.1em;">${maskIC(item.ic)}</td>
                     <td>
                         ${item.jawatan || '-'}<br>
                         <small style="color:#666;">${item.sektor || '-'}</small>
                     </td>
-                    <td>${item.tempoh_keahlian_club || '-'}</td>
+                    <td>
+                        <input type="text" class="member-id-input" 
+                               value="${currentIdVal}" 
+                               placeholder="${placeholderVal}"
+                               onchange="updateMemberId('${item.id}', this.value)"
+                               onblur="formatIdInput(this)"
+                               title="Masukkan ID dan tekan Enter">
+                    </td>
                     <td>${statusBadge}</td>
                     <td style="text-align: center;">
                         <div style="display:flex; justify-content:center; gap:5px;">
@@ -469,12 +539,90 @@
             tbody.innerHTML += row;
         });
         
-        // Reset checkbox header
         document.getElementById('selectAll').checked = false;
         updateBulkButton();
     }
 
-    // 3. Fungsi Carian (Client-side)
+    // 3. Fungsi Sort (Susun)
+    window.sortTable = function(key) {
+        // Toggle order
+        if (currentSort.key === key) {
+            currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSort.key = key;
+            currentSort.order = 'asc';
+        }
+        
+        // Sort data array
+        sortDataArray(allData, currentSort.key, currentSort.order);
+        
+        // Re-render
+        renderTable(allData);
+    }
+
+    function sortDataArray(arr, key, order) {
+        arr.sort((a, b) => {
+            let valA = (a[key] || '').toString().toLowerCase();
+            let valB = (b[key] || '').toString().toLowerCase();
+
+            // Special handling for Membership Number to sort numerically
+            if (key === 'no_keahlian') {
+                valA = parseInt(valA) || 0;
+                valB = parseInt(valB) || 0;
+            }
+
+            if (valA < valB) return order === 'asc' ? -1 : 1;
+            if (valA > valB) return order === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }
+
+    // 4. Auto-Format Input ID (000001)
+    window.formatIdInput = function(input) {
+        if(input.value.trim() !== "") {
+            // Pad start dengan 0 sehingga 6 digit
+            input.value = input.value.trim().padStart(6, '0');
+            // Trigger change event manually to save if needed, though onchange handles save
+        }
+    }
+
+    // 5. Fungsi Update No. Keahlian
+    window.updateMemberId = async function(docId, newValue) {
+        // Format value first
+        const formattedValue = newValue.trim().padStart(6, '0');
+        
+        if (!newValue) return; 
+
+        try {
+            const userRef = doc(db, 'ppd_registrations', docId);
+            await updateDoc(userRef, {
+                no_keahlian: formattedValue
+            });
+            
+            // Update local data
+            const item = allData.find(i => i.id === docId);
+            if (item) item.no_keahlian = formattedValue;
+
+            // Visual Feedback
+            const inputField = document.activeElement;
+            if(inputField) {
+                inputField.value = formattedValue; // Ensure UI shows formatted
+                inputField.style.borderColor = "#28a745";
+                inputField.style.backgroundColor = "#e8f5e9";
+                setTimeout(() => {
+                    inputField.style.borderColor = "#ccc";
+                    inputField.style.backgroundColor = "white";
+                }, 1000);
+            }
+            console.log("No Keahlian dikemaskini:", formattedValue);
+
+        } catch (error) {
+            console.error("Gagal simpan No Keahlian:", error);
+            alert("Gagal menyimpan No. Keahlian.");
+        }
+    }
+
+    // 6. Fungsi Carian
     window.searchTable = function() {
         const input = document.getElementById('searchInput').value.toUpperCase();
         const filtered = allData.filter(item => {
@@ -485,7 +633,7 @@
         renderTable(filtered);
     }
 
-    // 4. Sahkan Individu
+    // 7. Sahkan Individu
     window.verifySingle = async function(docId) {
         if (!confirm("Adakah anda pasti ingin mengesahkan keahlian ini?")) return;
 
@@ -496,12 +644,11 @@
                 verifiedAt: new Date().toISOString()
             });
             
-            // Kemaskini data tempatan tanpa refresh penuh
-            const itemIndex = allData.findIndex(x => x.id === docId);
-            if (itemIndex > -1) allData[itemIndex].status = "DISAHKAN";
+            const item = allData.find(x => x.id === docId);
+            if (item) item.status = "DISAHKAN";
             
             alert("Permohonan berjaya disahkan!");
-            renderTable(allData); // Re-render untuk ubah status
+            renderTable(allData); 
             updateStats();
 
         } catch (error) {
@@ -510,14 +657,13 @@
         }
     }
 
-    // 5. Hapus Individu
+    // 8. Hapus Individu
     window.deleteSingle = async function(docId, name) {
         if (!confirm(`AMARAN: Adakah anda pasti ingin memadam rekod ${name}?\nTindakan ini tidak boleh dikembalikan.`)) return;
 
         try {
             await deleteDoc(doc(db, 'ppd_registrations', docId));
             
-            // Buang dari array tempatan
             allData = allData.filter(x => x.id !== docId);
             
             renderTable(allData);
@@ -530,7 +676,7 @@
         }
     }
 
-    // 6. Logik Checkbox & Bulk Action
+    // 9. Logik Checkbox & Bulk Action
     window.toggleSelectAll = function() {
         const masterCheck = document.getElementById('selectAll');
         const rows = document.querySelectorAll('.select-row');
@@ -547,7 +693,7 @@
         btn.disabled = checkedBoxes.length === 0;
     }
 
-    // 7. Sahkan Secara Pukal (Bulk Verify)
+    // 10. Sahkan Secara Pukal
     window.bulkApprove = async function() {
         const checkedBoxes = document.querySelectorAll('.select-row:checked');
         if (checkedBoxes.length === 0) return;
@@ -566,14 +712,13 @@
                 const docId = cb.value;
                 const userRef = doc(db, 'ppd_registrations', docId);
                 
-                // Semak jika belum disahkan
                 const item = allData.find(x => x.id === docId);
                 if (item && item.status !== 'DISAHKAN') {
                     await updateDoc(userRef, {
                         status: "DISAHKAN",
                         verifiedAt: new Date().toISOString()
                     });
-                    item.status = "DISAHKAN"; // Update local
+                    item.status = "DISAHKAN";
                     successCount++;
                 }
             }
@@ -593,7 +738,6 @@
         }
     }
 
-    // Fungsi Helper untuk update stats tanpa fetch semula database
     function updateStats() {
         let pending = 0;
         let approved = 0;
