@@ -110,23 +110,26 @@
             margin-top: 15px;
         }
 
-        /* WhatsApp Button */
-        .whatsapp-link {
+        /* BUTTON STYLES */
+        .whatsapp-link, .wall-link, .finance-link {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: white;
-            color: #25D366;
             padding: 8px 15px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
             font-size: 0.85em;
-            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.2);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid #25D366;
         }
 
+        /* WhatsApp Button */
+        .whatsapp-link {
+            background: white;
+            color: #25D366;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.2);
+            border: 1px solid #25D366;
+        }
         .whatsapp-link:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
@@ -136,26 +139,29 @@
 
         /* Wall of Members Button */
         .wall-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
             background: linear-gradient(45deg, #FFD700, #FDB931);
             color: #333;
-            padding: 8px 15px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.85em;
             box-shadow: 0 5px 15px rgba(253, 185, 49, 0.3);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid #FDB931;
         }
-
         .wall-link:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(253, 185, 49, 0.5);
             background: #fff;
             color: #FDB931;
+        }
+
+        /* NEW: Finance Link Button */
+        .finance-link {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(56, 239, 125, 0.3);
+            border: 1px solid #38ef7d;
+        }
+        .finance-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(56, 239, 125, 0.5);
+            background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
         }
 
         /* Modern Tabs */
@@ -684,6 +690,10 @@
             
             <a href="member.html" class="wall-link" target="_blank">
                 <i class="fas fa-address-card" style="font-size: 1.2em; margin-right: 8px;"></i> Lihat Semua Ahli
+            </a>
+
+            <a href="https://docs.google.com/spreadsheets/d/1Xzju-uMp1jfzWiRECTELXhNadzy7J_CLVApqaRayUd0/edit?gid=1917826811#gid=1917826811" target="_blank" class="finance-link">
+                <i class="fas fa-file-invoice-dollar" style="font-size: 1.2em; margin-right: 8px;"></i> Akaun Kewangan
             </a>
         </div>
     </div>
