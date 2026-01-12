@@ -259,38 +259,58 @@
             box-shadow: 0 15px 25px rgba(0, 51, 153, 0.4);
         }
 
-        /* Modal Styles */
+        /* Standard Modern Modal Styles */
         .modal {
             display: none; 
             position: fixed; 
-            z-index: 100; 
+            z-index: 1000; 
             left: 0;
             top: 0;
             width: 100%; 
             height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.6); 
+            overflow: hidden; 
+            background-color: rgba(0,0,0,0.5); 
             backdrop-filter: blur(5px);
-            padding-top: 50px;
+            align-items: center;
+            justify-content: center;
             animation: fadeIn 0.3s;
         }
 
         .modal-content {
-            background-color: white;
-            margin: 2% auto; 
+            background-color: #fff;
             padding: 30px;
-            border: none;
+            border-radius: 16px;
             width: 90%; 
-            max-width: 450px;
-            border-radius: 20px;
+            max-width: 480px;
             text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-            animation: zoomIn 0.3s;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Close Button (X) */
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+            z-index: 5;
+        }
+        .close-btn:hover {
+            color: #333;
         }
 
         @keyframes zoomIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            from { transform: scale(0.95) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
         }
 
         /* PREMIUM MEMBER CARD STYLES */
@@ -305,7 +325,7 @@
             text-align: left;
             position: relative;
             overflow: hidden;
-            margin: 25px 0;
+            margin: 10px 0 20px 0;
             font-family: 'Poppins', sans-serif;
             transition: opacity 0.3s;
         }
@@ -734,6 +754,8 @@
 <!-- Modal Pengesahan / Paparan Kad -->
 <div id="confirmModal" class="modal">
     <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        
         <h3 id="modalTitle" style="color: var(--primary-color); margin-bottom:5px; font-weight:800;">SAHKAN MAKLUMAT</h3>
         <p id="modalSubtitle" style="font-size:0.9em; color:#666; margin-bottom:20px;">Semak kad keahlian digital anda:</p>
         
@@ -1019,7 +1041,7 @@
 
                 document.getElementById('registerFooter').style.display = 'none';
                 document.getElementById('checkFooter').style.display = 'block';
-                document.getElementById('confirmModal').style.display = 'block';
+                document.getElementById('confirmModal').style.display = 'flex';
             } else {
                 // Cadangan daftar terus jika tiada rekod
                 if (confirm("Tiada rekod ditemui untuk No. IC: " + checkIC + ".\n\nAdakah anda berminat untuk mendaftar keahlian sekarang?")) {
@@ -1069,7 +1091,7 @@
 
         document.getElementById('registerFooter').style.display = 'block';
         document.getElementById('checkFooter').style.display = 'none';
-        document.getElementById('confirmModal').style.display = 'block';
+        document.getElementById('confirmModal').style.display = 'flex';
     }
 
     window.closeModal = function() { document.getElementById('confirmModal').style.display = 'none'; }
