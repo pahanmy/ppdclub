@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wall of Members - PPD CLUB Miri</title>
+    <!-- Import Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #003399 0%, #2575fc 100%);
+            --primary-color: #003399;
+            --accent-color: #e74c3c;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --gold: #FFD700;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 60px 20px 40px;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .main-logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        h1 {
+            font-weight: 800;
+            text-transform: uppercase;
+            margin: 0;
+            letter-spacing: 2px;
+            font-size: 2.5em;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 30px auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1.1em;
+            font-family: inherit;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            transform: scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        /* GRID LAYOUT */
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 20px 50px 80px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* MEMBER CARD */
+        .member-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .member-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .card-header-bg {
+            height: 100px;
+            width: 100%;
+            background: var(--primary-gradient);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .photo-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid white;
+            overflow: hidden;
+            margin-top: 40px;
+            z-index: 1;
+            background: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .member-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .member-info {
+            padding: 15px 20px 0;
+            z-index: 1;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .member-name {
+            font-weight: 700;
+            font-size: 1.1em;
+            color: var(--primary-color);
+            margin: 10px 0 5px;
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        .member-position {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .membership-badge {
+            background: linear-gradient(45deg, #FFD700, #FDB931);
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.9em;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(253, 185, 49, 0.4);
+            letter-spacing: 1px;
+        }
+
+        .loading-container {
+            text-align: center;
+            width: 100%;
+            padding: 50px;
+            color: white;
+        }
+
+        .loader {
+            border: 5px solid rgba(255,255,255,0.3);
+            border-top: 5px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8em; }
+            .members-grid { grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero-section">
+        <img src="https://i.postimg.cc/3JqzZXqd/TRANSPARENT-BACK-GROUND.png" alt="Logo PPD Club" class="main-logo">
+        <h1>WALL OF MEMBERS</h1>
+        <p>Ahli Berdaftar PPD CLUB Miri</p>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Cari nama ahli..." onkeyup="filterMembers()">
+        </div>
+    </div>
+
+    <div id="loading" class="loading-container">
+        <div class="loader"></div>
+        <p>Memuatkan senarai ahli...</p>
+    </div>
+
+    <div id="membersGrid" class="members-grid" style="display: none;">
+        <!-- Member cards will be injected here -->
+    </div>
+
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- FIREBASE CONFIGURATION ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyAZC1WyqVSlicy4jRIZyIFmx2rjlrbtfus",
+          authDomain: "ppdclub-e9f2a.firebaseapp.com",
+          projectId: "ppdclub-e9f2a",
+          storageBucket: "ppdclub-e9f2a.firebasestorage.app",
+          messagingSenderId: "72228598666",
+          appId: "1:72228598666:web:1855035320bee1066c0e73"
+        };
+
+        let db;
+        let allMembers = [];
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            db = getFirestore(app);
+
+            // Auto-login anonymous untuk akses awam (Read-only rules)
+            signInAnonymously(auth).catch((error) => console.error("Auth Error:", error));
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    loadMembers();
+                }
+            });
+
+        } catch (e) {
+            console.error("Firebase Error:", e);
+        }
+
+        // --- LOAD DATA ---
+        async function loadMembers() {
+            const grid = document.getElementById('membersGrid');
+            const loading = document.getElementById('loading');
+
+            try {
+                // Ambil semua data (tapis di client-side untuk elak masalah index composite)
+                const querySnapshot = await getDocs(collection(db, 'ppd_registrations'));
+                
+                allMembers = [];
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    // Hanya paparkan jika STATUS = DISAHKAN dan ADA No. Keahlian
+                    if (data.status === 'DISAHKAN' && data.no_keahlian) {
+                        allMembers.push(data);
+                    }
+                });
+
+                // Susun mengikut No. Keahlian (Numerik)
+                allMembers.sort((a, b) => parseInt(a.no_keahlian) - parseInt(b.no_keahlian));
+
+                renderMembers(allMembers);
+                
+                loading.style.display = 'none';
+                grid.style.display = 'grid';
+
+            } catch (error) {
+                console.error("Error loading members:", error);
+                loading.innerHTML = "<p>Gagal memuatkan data. Sila cuba lagi nanti.</p>";
+            }
+        }
+
+        // --- RENDER CARDS ---
+        window.renderMembers = function(members) {
+            const grid = document.getElementById('membersGrid');
+            grid.innerHTML = '';
+
+            if (members.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: white;">Tiada ahli dijumpai.</div>';
+                return;
+            }
+
+            members.forEach(member => {
+                const photoUrl = member.foto_url ? member.foto_url : 'https://via.placeholder.com/150?text=AHLI';
+                
+                const card = `
+                    <div class="member-card">
+                        <div class="card-header-bg"></div>
+                        <div class="photo-container">
+                            <img src="${photoUrl}" alt="${member.nama}" class="member-photo" loading="lazy">
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">${member.nama}</div>
+                            <div class="member-position">${member.jawatan}</div>
+                            <div class="membership-badge">
+                                <i class="fas fa-id-card"></i> ${member.no_keahlian}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+        }
+
+        // --- SEARCH FUNCTION ---
+        window.filterMembers = function() {
+            const query = document.getElementById('searchInput').value.toUpperCase();
+            const filtered = allMembers.filter(member => 
+                member.nama.toUpperCase().includes(query) || 
+                (member.no_keahlian && member.no_keahlian.includes(query))
+            );
+            renderMembers(filtered);
+        }
+
+    </script>
+</body>
+</html>
