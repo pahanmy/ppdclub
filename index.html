@@ -238,6 +238,38 @@
             margin-bottom: 5px;
         }
 
+        /* Verification Box */
+        .verification-box {
+            background-color: #e3f2fd;
+            border: 2px solid #2196f3;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+            animation: fadeIn 0.5s;
+            display: none;
+        }
+
+        .verification-title {
+            color: #0d47a1;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        .btn-verify {
+            background: #2196f3;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            width: 100%;
+            font-weight: 600;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-verify:hover { background: #1976d2; }
+
         /* Buttons */
         .btn-submit {
             background: var(--primary-gradient);
@@ -551,6 +583,21 @@
                 <input type="text" name="ic" id="ic_number" maxlength="12" placeholder="Contoh: 850101135050" required>
             </div>
 
+            <!-- Loading Spinner untuk IC Check -->
+            <div id="icCheckLoader" class="loader" style="margin-bottom: 20px;"></div>
+
+            <!-- Verification Box (Hidden by Default) -->
+            <div id="verificationBox" class="verification-box">
+                <div class="verification-title">
+                    <i class="fas fa-info-circle"></i> REKOD DITEMUI
+                </div>
+                <p style="font-size:0.9em; margin-bottom:15px; color:#555;">
+                    No. IC ini telah berdaftar. Untuk mengemaskini maklumat, sila masukkan <strong>No. Telefon</strong> yang telah didaftarkan untuk pengesahan.
+                </p>
+                <input type="text" id="verify_phone" placeholder="Masukkan No. Telefon (Contoh: 013XXXXXXX)">
+                <button type="button" class="btn-verify" onclick="verifyAndLoadData()">SAHKAN & KEMASKINI</button>
+            </div>
+
             <div id="personal-details" style="display: none;">
                 <!-- Auto Fields -->
                 <div style="display: flex; gap: 15px;">
@@ -726,7 +773,7 @@
                     </label>
                 </div>
 
-                <button type="button" class="btn-submit" onclick="validateAndPreview()">DAFTAR KEAHLIAN SEKARANG</button>
+                <button type="button" class="btn-submit" id="mainSubmitBtn" onclick="validateAndPreview()">DAFTAR KEAHLIAN SEKARANG</button>
             </div>
         </form>
     </div>
@@ -815,7 +862,7 @@
 
             <div class="modal-buttons" id="modalBtns">
                 <button class="btn-cancel" onclick="closeModal()">KEMBALI</button>
-                <button class="btn-confirm" onclick="finalSubmit()">SAHKAN & HANTAR</button>
+                <button class="btn-confirm" id="btnFinalSubmit" onclick="finalSubmit()">SAHKAN & HANTAR</button>
             </div>
         </div>
 
@@ -833,11 +880,12 @@
     // Firebase Imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // Global variable references
     const icInput = document.getElementById('ic_number');
     const detailsDiv = document.getElementById('personal-details');
+    const verificationBox = document.getElementById('verificationBox');
     const startDateInput = document.getElementById('start_date');
     const durationBox = document.getElementById('service_duration');
     const durationText = document.getElementById('duration_text');
@@ -845,7 +893,12 @@
     const clubDurationBox = document.getElementById('club_duration_box');
     const clubDurationText = document.getElementById('club_duration_text');
     const hiddenClubDuration = document.getElementById('hidden_club_duration');
+    const icCheckLoader = document.getElementById('icCheckLoader');
     
+    // Global Vars for Edit Mode
+    let editingDocId = null;
+    let tempFoundData = null;
+
     // --- FIREBASE SETUP ---
     const firebaseConfig = {
       apiKey: "AIzaSyAZC1WyqVSlicy4jRIZyIFmx2rjlrbtfus",
@@ -891,17 +944,126 @@
         });
     });
 
+    // Modified IC Input Logic
     icInput.addEventListener('input', function() {
         this.value = this.value.replace(/[^0-9]/g, ''); 
         const ic = this.value;
 
-        if (ic.length === 12) {
-            extractICData(ic);
-            detailsDiv.style.display = 'block';
-        } else {
+        // Reset state jika user ubah IC
+        if (ic.length < 12) {
             detailsDiv.style.display = 'none';
+            verificationBox.style.display = 'none';
+            editingDocId = null;
+            tempFoundData = null;
+            document.getElementById('mainSubmitBtn').innerText = "DAFTAR KEAHLIAN SEKARANG";
+        }
+
+        if (ic.length === 12) {
+            checkExistingRegistration(ic);
         }
     });
+
+    // Function: Check if User Exists (Logic Baru)
+    async function checkExistingRegistration(ic) {
+        if (!db) return;
+        
+        icCheckLoader.style.display = 'block';
+        verificationBox.style.display = 'none';
+        detailsDiv.style.display = 'none';
+
+        try {
+            // Fetch all (since we can't use where() easily with simple setup)
+            const querySnapshot = await getDocs(collection(db, 'ppd_registrations'));
+            let found = null;
+            let docId = null;
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                if (data.ic === ic) {
+                    found = data;
+                    docId = doc.id;
+                }
+            });
+
+            if (found) {
+                // Rekod Jumpa -> Tunjuk Verification Box
+                tempFoundData = { ...found, id: docId }; // Store temp
+                verificationBox.style.display = 'block';
+            } else {
+                // Rekod Tak Jumpa -> Tunjuk Borang Daftar Baru
+                extractICData(ic);
+                detailsDiv.style.display = 'block';
+                // Reset form fields
+                document.getElementById('registrationForm').reset();
+                document.getElementById('ic_number').value = ic; // Put IC back
+                extractICData(ic); // Re-calc DOB
+                editingDocId = null;
+                document.getElementById('mainSubmitBtn').innerText = "DAFTAR KEAHLIAN SEKARANG";
+            }
+
+        } catch (error) {
+            console.error("Error checking IC:", error);
+            alert("Ralat menyemak pangkalan data.");
+        } finally {
+            icCheckLoader.style.display = 'none';
+        }
+    }
+
+    // Function: Verify Phone & Pre-fill Data
+    window.verifyAndLoadData = function() {
+        const phoneInput = document.getElementById('verify_phone').value.trim();
+        const storedPhone = tempFoundData.phone;
+
+        // Simple comparison (ignoring dashes/spaces usually better, but sticking to exact for security)
+        if (phoneInput === storedPhone) {
+            alert("Pengesahan Berjaya! Sila kemaskini maklumat anda.");
+            
+            // Sembunyi box verifikasi, tunjuk borang
+            verificationBox.style.display = 'none';
+            detailsDiv.style.display = 'block';
+            
+            // Set Mode Edit
+            editingDocId = tempFoundData.id;
+            document.getElementById('mainSubmitBtn').innerText = "KEMASKINI MAKLUMAT";
+
+            // Pre-fill form
+            document.getElementById('fullname').value = tempFoundData.nama;
+            document.getElementById('status_kahwin').value = tempFoundData.status_kahwin;
+            document.getElementById('sector').value = tempFoundData.sektor;
+            document.getElementById('unit').value = tempFoundData.unit;
+            document.getElementById('phone').value = tempFoundData.phone;
+            document.getElementById('start_date').value = tempFoundData.tarikh_mula;
+            
+            // Handle Jawatan
+            const jawatanSelect = document.getElementById('jawatan_select');
+            const jawatanCustom = document.getElementById('jawatan_custom');
+            
+            // Check if jawatan is in select list
+            let foundInList = false;
+            for(let i=0; i<jawatanSelect.options.length; i++){
+                if(jawatanSelect.options[i].value === tempFoundData.jawatan){
+                    jawatanSelect.value = tempFoundData.jawatan;
+                    foundInList = true;
+                    break;
+                }
+            }
+            
+            if(!foundInList){
+                jawatanSelect.value = "LAIN-LAIN";
+                jawatanCustom.style.display = 'block';
+                jawatanCustom.value = tempFoundData.jawatan;
+            } else {
+                jawatanCustom.style.display = 'none';
+            }
+
+            // Trigger calc logic
+            extractICData(tempFoundData.ic);
+            startDateInput.dispatchEvent(new Event('change'));
+
+        } else {
+            alert("Nombor telefon tidak sepadan dengan rekod kami.");
+        }
+    }
 
     // Tambahan: Pastikan input semakan IC juga hanya nombor
     const checkIcInput = document.getElementById('check_ic');
@@ -1091,12 +1253,21 @@
 
         document.getElementById('registerFooter').style.display = 'block';
         document.getElementById('checkFooter').style.display = 'none';
+        
+        // Tukar text butang submit jika sedang mengemaskini
+        const btnFinal = document.getElementById('btnFinalSubmit');
+        if (editingDocId) {
+            btnFinal.innerText = "SAHKAN & KEMASKINI";
+        } else {
+            btnFinal.innerText = "SAHKAN & HANTAR";
+        }
+
         document.getElementById('confirmModal').style.display = 'flex';
     }
 
     window.closeModal = function() { document.getElementById('confirmModal').style.display = 'none'; }
 
-    // --- FINAL SUBMIT LOGIC ---
+    // --- FINAL SUBMIT LOGIC (Updated for Add/Edit) ---
     window.finalSubmit = async function() {
         if (!db) { alert("Sistem Pangkalan Data tidak dapat dihubungi."); return; }
         if (!currentUser) { alert("Sistem sedang bersambung... Sila tunggu."); return; }
@@ -1121,22 +1292,38 @@
             tempoh_khidmat: document.getElementById('hidden_duration').value,
             tempoh_keahlian_club: document.getElementById('hidden_club_duration').value,
             phone: document.getElementById('phone').value,
-            status: "PENDING", // Status asal adalah PENDING
+            status: "PENDING", // Sentiasa reset ke Pending bila update
             timestamp: new Date().toISOString()
         };
 
         try {
-            await addDoc(collection(db, 'ppd_registrations'), registrationData);
-            loading.style.display = 'none';
-            document.getElementById('statusMessage').innerText = "BERJAYA!";
-            setTimeout(() => {
-                alert("PENDAFTARAN DITERIMA!\nStatus kini: MENUNGGU PENGESAHAN.");
-                window.closeModal();
-                document.getElementById('registrationForm').reset();
-                detailsDiv.style.display = 'none';
-                modalBtns.style.display = 'flex';
-                document.getElementById('statusMessage').innerText = "";
-            }, 500);
+            if (editingDocId) {
+                // KEMASKINI REKOD SEDIA ADA
+                await updateDoc(doc(db, 'ppd_registrations', editingDocId), registrationData);
+                document.getElementById('statusMessage').innerText = "KEMASKINI BERJAYA!";
+                setTimeout(() => {
+                    alert("MAKLUMAT DIKEMASKINI!\nStatus kini kembali kepada: MENUNGGU PENGESAHAN.");
+                    window.closeModal();
+                    document.getElementById('registrationForm').reset();
+                    detailsDiv.style.display = 'none';
+                    editingDocId = null; // Reset ID
+                    document.getElementById('mainSubmitBtn').innerText = "DAFTAR KEAHLIAN SEKARANG"; // Reset text
+                    modalBtns.style.display = 'flex';
+                    document.getElementById('statusMessage').innerText = "";
+                }, 500);
+            } else {
+                // DAFTAR BARU
+                await addDoc(collection(db, 'ppd_registrations'), registrationData);
+                document.getElementById('statusMessage').innerText = "PENDAFTARAN BERJAYA!";
+                setTimeout(() => {
+                    alert("PENDAFTARAN DITERIMA!\nStatus kini: MENUNGGU PENGESAHAN.");
+                    window.closeModal();
+                    document.getElementById('registrationForm').reset();
+                    detailsDiv.style.display = 'none';
+                    modalBtns.style.display = 'flex';
+                    document.getElementById('statusMessage').innerText = "";
+                }, 500);
+            }
         } catch (error) {
             console.error('Error:', error);
             alert("Ralat sistem!");
