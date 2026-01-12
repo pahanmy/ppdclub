@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faedah & Hadiah - PPD CLUB Miri</title>
+    <!-- Import Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #003399 0%, #2575fc 100%);
+            --gold-gradient: linear-gradient(45deg, #FFD700, #FDB931);
+            --card-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            color: #003399;
+            text-transform: uppercase;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .benefits-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 1em;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .benefits-table th, .benefits-table td {
+            border: 1px solid #eee;
+            padding: 15px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .benefits-table th {
+            background: var(--gold-gradient);
+            color: #333;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+        }
+
+        .benefits-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .category-icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+            vertical-align: middle;
+            color: #e74c3c;
+        }
+
+        .amount {
+            font-weight: 700;
+            color: #27ae60;
+            font-size: 1.1em;
+        }
+
+        .btn-back {
+            display: block;
+            width: fit-content;
+            margin: 30px auto 0;
+            padding: 12px 30px;
+            background: #003399;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-3px);
+            background: #002266;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Faedah Keahlian</h1>
+        <p class="subtitle">Senarai sumbangan dan hadiah untuk ahli PPD CLUB Miri</p>
+
+        <table class="benefits-table">
+            <thead>
+                <tr>
+                    <th width="40%">Kategori</th>
+                    <th width="35%">Syarat / Tempoh</th>
+                    <th width="25%">Kadar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="2">
+                        <span class="category-icon">🎁</span> <strong>Hadiah</strong>
+                    </td>
+                    <td>Berkahwin</td>
+                    <td class="amount">RM 30</td>
+                </tr>
+                <tr>
+                    <td>Hari Jadi</td>
+                    <td class="amount">RM 20</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">
+                        <span class="category-icon">👶</span> <strong>Kelahiran Anak</strong>
+                        <div style="font-size:0.8em; color:#777; margin-top:5px;">(Ikut Tempoh Keahlian)</div>
+                    </td>
+                    <td>Kurang 3 Tahun</td>
+                    <td class="amount">RM 30</td>
+                </tr>
+                <tr>
+                    <td>Kurang 5 Tahun</td>
+                    <td class="amount">RM 50</td>
+                </tr>
+                <tr>
+                    <td>5 Tahun ke atas</td>
+                    <td class="amount">RM 70</td>
+                </tr>
+                <!-- Bersara/Berpindah -->
+                <tr>
+                    <td rowspan="4">
+                        <span class="category-icon">🏠</span> <strong>Bersara / Berpindah</strong>
+                        <div style="font-size:0.8em; color:#777; margin-top:5px;">(Ikut Tempoh Keahlian)</div>
+                    </td>
+                    <td>Kurang 1 Tahun</td>
+                    <td class="amount">RM 100</td>
+                </tr>
+                <tr>
+                    <td>Kurang 3 Tahun</td>
+                    <td class="amount">RM 200</td>
+                </tr>
+                <tr>
+                    <td>Kurang 5 Tahun</td>
+                    <td class="amount">RM 300</td>
+                </tr>
+                <tr>
+                    <td>Lebih 5 Tahun</td>
+                    <td class="amount">RM 400</td>
+                </tr>
+                <!-- Kematian -->
+                <tr>
+                    <td rowspan="4">
+                        <span class="category-icon">💰</span> <strong>Kematian Ahli</strong>
+                        <div style="font-size:0.8em; color:#777; margin-top:5px;">(Ikut Tempoh Keahlian)</div>
+                    </td>
+                    <td>Kurang 1 Tahun</td>
+                    <td class="amount">RM 200</td>
+                </tr>
+                <tr>
+                    <td>Kurang 3 Tahun</td>
+                    <td class="amount">RM 500</td>
+                </tr>
+                <tr>
+                    <td>Kurang 5 Tahun</td>
+                    <td class="amount">RM 800</td>
+                </tr>
+                <tr>
+                    <td>Lebih 5 Tahun</td>
+                    <td class="amount">RM 1000</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a href="javascript:history.back()" class="btn-back"><i class="fas fa-arrow-left"></i> Kembali</a>
+    </div>
+
+</body>
+</html>
