@@ -722,7 +722,7 @@
                         <option value="TIMBALAN PPD (PEMBELAJARAN)">TIMBALAN PPD (PEMBELAJARAN)</option>
                         <option value="TIMBALAN PPD (PENGURUSAN SEKOLAH)">TIMBALAN PPD (PENGURUSAN SEKOLAH)</option>
                         <option value="TIMBALAN PPD (PEMBANGUNAN MURID)">TIMBALAN PPD (PEMBANGUNAN MURID)</option>
-                        <option value="PENOLONG  PPD">PENOLONG PPD</option>
+                        <option value="PENOLONG PEGAWAI PPD">PENOLONG PEGAWAI PPD</option>
                         <option value="KAUNSELOR PENDIDIKAN DAERAH">KAUNSELOR PENDIDIKAN DAERAH</option>
                         <option value="SISC+">SISC+</option>
                         <option value="SIPARTNER+">SIPARTNER+</option>
@@ -912,6 +912,12 @@
                             <div class="card-label">TEMPOH CLUB</div>
                             <div class="card-value" id="cardDuration">1 TAHUN</div>
                         </div>
+                    </div>
+
+                    <!-- NO. KEAHLIAN FIELD (UPDATED) -->
+                    <div class="card-field">
+                        <div class="card-label">NO. KEAHLIAN / MEMBERSHIP NO</div>
+                        <div class="card-value" id="cardMemberID" style="color: #FFD700; letter-spacing: 1px;">-</div>
                     </div>
 
                     <div class="card-field">
@@ -1305,6 +1311,7 @@
                 document.getElementById('cardJawatan').innerText = foundData.jawatan;
                 document.getElementById('cardDuration').innerText = foundData.tempoh_keahlian_club || "1 TAHUN";
                 document.getElementById('cardBarcode').innerText = "*" + foundData.ic + "*";
+                document.getElementById('cardMemberID').innerText = foundData.no_keahlian || "BELUM DITETAPKAN"; // Papar No. Keahlian
 
                 // Handle Photo in Card
                 const cardPhoto = document.getElementById('cardUserPhoto');
@@ -1377,6 +1384,7 @@
         document.getElementById('cardJawatan').innerText = jawatan;
         document.getElementById('cardDuration').innerText = clubDuration || "BARU MENDAFTAR";
         document.getElementById('cardBarcode').innerText = "*" + ic + "*";
+        document.getElementById('cardMemberID').innerText = "BARU / PENDING";
         
         // Handle Photo Preview in Card
         const cardPhoto = document.getElementById('cardUserPhoto');
