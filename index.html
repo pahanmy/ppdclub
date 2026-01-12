@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pendaftaran Keahlian PPD CLUB - PPD Miri</title>
-    <!-- Import Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Libre+Barcode+39+Text&display=swap" rel="stylesheet">
-    <!-- Tambah FontAwesome untuk Ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
@@ -28,16 +26,43 @@
             margin: 0;
             padding: 20px;
             display: flex;
+            /* Perubahan: Susun ke bawah (Column) supaya logo di atas kotak */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             color: #333;
+            /* Perubahan: Jarak antara logo dan kotak */
+            gap: 20px;
         }
 
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
+        }
+
+        /* Perubahan: Animasi Melompat (Float) ditambah */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Styling untuk Logo Utama (Kini di luar kotak) */
+        .main-logo {
+            width: 160px; 
+            height: auto;
+            /* Tambah shadow supaya jelas atas background warna */
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+            transition: transform 0.3s ease;
+            /* Tambah animasi lompat */
+            animation: float 3s ease-in-out infinite;
+            z-index: 10;
+        }
+        
+        .main-logo:hover {
+            transform: scale(1.1);
         }
 
         .container {
@@ -60,19 +85,6 @@
         .header {
             text-align: center;
             margin-bottom: 30px;
-        }
-
-        /* Styling untuk Logo Utama */
-        .main-logo {
-            width: 180px; 
-            height: auto;
-            margin-bottom: 10px;
-            filter: contrast(1.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .main-logo:hover {
-            transform: scale(1.05);
         }
 
         .header h2 {
@@ -667,35 +679,30 @@
 </head>
 <body>
 
+<img src="https://i.postimg.cc/3JqzZXqd/TRANSPARENT-BACK-GROUND.png" alt="Logo PPD Club" class="main-logo">
+
 <div class="container">
     <div class="header">
-        <!-- Logo Utama Ditambah -->
-        <img src="https://i.postimg.cc/3JqzZXqd/TRANSPARENT-BACK-GROUND.png" alt="Logo PPD Club" class="main-logo">
         
         <h2>Pendaftaran Keahlian PPD CLUB</h2>
         <p>PEJABAT PENDIDIKAN DAERAH MIRI</p>
         
-        <!-- Action Buttons Container -->
         <div class="header-actions">
-            <!-- Pautan WhatsApp Admin -->
             <a href="https://wa.me/60135792215?text=Salam%20Admin%2C%20saya%20ada%20pertanyaan%20mengenai%20Pendaftaran%20PPD%20Club." target="_blank" class="whatsapp-link">
                 <i class="fab fa-whatsapp"></i> Hubungi Admin
             </a>
             
-            <!-- Butang Wall of Members -->
             <a href="member.html" class="wall-link" target="_blank">
                 <i class="fas fa-users"></i> Lihat Semua Ahli
             </a>
         </div>
     </div>
 
-    <!-- TABS NAVIGASI -->
     <div class="nav-tabs">
         <div class="nav-tab active" onclick="switchTab('daftar')">DAFTAR BARU</div>
         <div class="nav-tab" onclick="switchTab('semak')">SEMAKAN KEAHLIAN</div>
     </div>
 
-    <!-- 1. BAHAGIAN PENDAFTARAN -->
     <div id="registerSection">
         <form id="registrationForm">
             <div class="form-group">
@@ -703,10 +710,8 @@
                 <input type="text" name="ic" id="ic_number" maxlength="12" placeholder="Contoh: 850101135050" required>
             </div>
 
-            <!-- Loading Spinner untuk IC Check -->
             <div id="icCheckLoader" class="loader" style="margin-bottom: 20px;"></div>
 
-            <!-- Verification Box (Hidden by Default) -->
             <div id="verificationBox" class="verification-box">
                 <div class="verification-title">
                     <i class="fas fa-info-circle"></i> REKOD DITEMUI
@@ -719,7 +724,6 @@
             </div>
 
             <div id="personal-details" style="display: none;">
-                <!-- Auto Fields -->
                 <div style="display: flex; gap: 15px;">
                     <div class="form-group" style="flex: 1;">
                         <label>TARIKH LAHIR</label>
@@ -731,13 +735,11 @@
                     </div>
                 </div>
 
-                <!-- User Entry Fields -->
                 <div class="form-group">
                     <label for="fullname">NAMA PENUH</label>
                     <input type="text" name="nama" id="fullname" placeholder="MASUKKAN NAMA PENUH SEPERTI DALAM IC" required>
                 </div>
 
-                <!-- Input Muat Naik Foto -->
                 <div class="form-group">
                     <label for="photo_upload">FOTO PROFIL / PASPORT <span style="font-size: 0.8em; color: #888; font-weight: normal;">(Pilihan)</span></label>
                     <input type="file" id="photo_upload" accept="image/*" onchange="uploadImage(this)">
@@ -810,7 +812,6 @@
                         <option value="PEMANDU KENDERAAN">PEMANDU KENDERAAN</option>
                         <option value="LAIN-LAIN">LAIN-LAIN (SILA NYATAKAN)</option>
                     </select>
-                    <!-- Input tambahan jika memilih Lain-lain -->
                     <input type="text" id="jawatan_custom" name="jawatan_custom" placeholder="MASUKKAN NAMA JAWATAN ANDA DI SINI" style="display: none; margin-top: 10px; border-color: var(--accent-color);">
                 </div>
 
@@ -818,13 +819,11 @@
                     <label for="start_date">TARIKH LAPOR DIRI DI PPD MIRI</label>
                     <input type="date" name="tarikh_mula" id="start_date" required>
                     
-                    <!-- Tempat papar tempoh khidmat (Perkhidmatan Sebenar) -->
                     <div id="service_duration" class="duration-box" style="background-color: #e3f2fd; border-radius:10px; padding:15px; margin-top:10px; border: 1px solid #90caf9; color: #0d47a1; display:none;">
                         TEMPOH PERKHIDMATAN: <span id="duration_text" style="font-weight:700">-</span>
                     </div>
                     <input type="hidden" name="tempoh_khidmat" id="hidden_duration">
 
-                    <!-- Tempat papar tempoh keahlian (Kiraan Kelab bermula 2024) -->
                     <div id="club_duration_box" class="duration-box" style="background-color: #e8f5e9; border-radius:10px; padding:15px; margin-top:10px; border: 1px solid #a5d6a7; color: #1b5e20; display: none;">
                         TEMPOH KEAHLIAN PPD CLUB: <span id="club_duration_text" style="font-weight: 800; font-size: 1.1em;">-</span>
                         <br><small style="font-weight: normal; font-size: 0.85em;">(Kiraan bermula dari Tahun 2024)</small>
@@ -837,10 +836,9 @@
                     <input type="text" name="phone" id="phone" placeholder="01X-XXXXXXX" required>
                 </div>
 
-                <!-- Maklumat Yuran & Faedah -->
                 <div class="fee-notice">
                     <div style="text-align: center; margin-bottom: 15px;">
-                        <strong style="font-size: 1.2em; color: #856404; letter-spacing:1px;">⭐ MAKLUMAN PENTING</strong>
+                        <strong style="font-size: 1.2em; color: #856404; letter-spacing:1px;">📢 MAKLUMAN PENTING</strong>
                     </div>
                     
                     <p style="margin-bottom: 15px; border-bottom: 1px dashed #d3b95f; padding-bottom: 15px;">
@@ -851,9 +849,8 @@
                         </span>
                     </p>
                     
-                    <strong style="display:block; margin-bottom:10px; color:#003399;">📋 FAEDAH KEAHLIAN:</strong>
+                    <strong style="display:block; margin-bottom:10px; color:#003399;">🎁 FAEDAH KEAHLIAN:</strong>
                     
-                    <!-- TABLE FAEDAH KEAHLIAN -->
                     <table class="benefits-table">
                         <thead>
                             <tr>
@@ -864,7 +861,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td rowspan="2"><strong>🎁 Hadiah</strong></td>
+                                <td rowspan="2"><strong>🎂 Hadiah</strong></td>
                                 <td>Berkahwin</td>
                                 <td>RM 30</td>
                             </tr>
@@ -885,9 +882,8 @@
                                 <td>5 Tahun ke atas</td>
                                 <td>RM 70</td>
                             </tr>
-                            <!-- Bersara/Berpindah -->
                             <tr>
-                                <td rowspan="4"><strong>🏠 Bersara / Berpindah</strong><br><small>(Ikut Tempoh Keahlian)</small></td>
+                                <td rowspan="4"><strong>👋 Bersara / Berpindah</strong><br><small>(Ikut Tempoh Keahlian)</small></td>
                                 <td>Kurang 1 Tahun</td>
                                 <td>RM 100</td>
                             </tr>
@@ -903,9 +899,8 @@
                                 <td>Lebih 5 Tahun</td>
                                 <td>RM 400</td>
                             </tr>
-                            <!-- Kematian -->
                             <tr>
-                                <td rowspan="4"><strong>💰 Kematian Ahli</strong><br><small>(Ikut Tempoh Keahlian)</small></td>
+                                <td rowspan="4"><strong>💸 Kematian Ahli</strong><br><small>(Ikut Tempoh Keahlian)</small></td>
                                 <td>Kurang 1 Tahun</td>
                                 <td>RM 200</td>
                             </tr>
@@ -925,7 +920,6 @@
                     </table>
                 </div>
 
-                <!-- Checkbox Pengesahan -->
                 <div class="checkbox-group">
                     <input type="checkbox" id="agreement_check" name="agreement_check" required>
                     <label for="agreement_check">
@@ -939,7 +933,6 @@
         </form>
     </div>
 
-    <!-- 2. BAHAGIAN SEMAKAN -->
     <div id="checkSection" style="display: none;">
         <div style="text-align: center; margin-bottom: 30px;">
             <div style="font-size: 3em; margin-bottom: 10px;">🔍</div>
@@ -959,7 +952,6 @@
 
 </div>
 
-<!-- Modal Pengesahan / Paparan Kad -->
 <div id="confirmModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -967,16 +959,13 @@
         <h3 id="modalTitle" style="color: var(--primary-color); margin-bottom:5px; font-weight:800;">SAHKAN MAKLUMAT</h3>
         <p id="modalSubtitle" style="font-size:0.9em; color:#666; margin-bottom:20px;">Semak kad keahlian digital anda:</p>
         
-        <!-- Member Card Preview -->
         <div class="member-card">
             
-            <!-- Overlay untuk status PENDING -->
             <div id="cardOverlay" class="pending-overlay">
                 <div class="pending-stamp">MENUNGGU<br>PENGESAHAN</div>
             </div>
 
             <div class="card-header">
-                <!-- Logo ditambah ke dalam Kad Keahlian -->
                 <div class="card-brand">
                     <img src="https://i.postimg.cc/3JqzZXqd/TRANSPARENT-BACK-GROUND.png" alt="Logo" class="card-logo-img">
                     <div class="card-logo">PPD CLUB MIRI</div>
@@ -984,15 +973,12 @@
                 <div class="card-subtitle">PREMIUM MEMBER</div>
             </div>
             
-            <!-- Card Body Update: Flex Row untuk Gambar + Info -->
             <div class="card-body">
                 
-                <!-- Kotak Gambar (Kiri) -->
                 <div class="card-photo-box" id="cardPhotoBox">
                     <img src="https://via.placeholder.com/150?text=FOTO" alt="Foto Ahli" id="cardUserPhoto">
                 </div>
 
-                <!-- Info Teks (Kanan) -->
                 <div class="card-details">
                     <div class="card-field">
                         <div class="card-label">NAMA / NAME</div>
@@ -1010,7 +996,6 @@
                         </div>
                     </div>
 
-                    <!-- Row untuk Tarikh Keahlian & No. Keahlian -->
                     <div style="display: flex; justify-content: space-between;">
                         <div class="card-field">
                             <div class="card-label">TARIKH KEAHLIAN / JOIN DATE</div>
@@ -1035,7 +1020,6 @@
             </div>
         </div>
 
-        <!-- Footer Modal Berubah Ikut Konteks (Daftar atau Semak) -->
         <div id="registerFooter">
             <div style="margin-top: 15px; font-size: 1.1em; background:#f8f9fa; padding:10px; border-radius:10px;">
                 YURAN TAHUNAN: <span style="color:var(--accent-color); font-weight:900;">RM60.00</span>
