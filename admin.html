@@ -7,6 +7,8 @@
     <!-- Import Font & Icon -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Import SheetJS untuk Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
         :root {
@@ -16,6 +18,7 @@
             --success-color: #28a745;
             --warning-color: #ffc107;
             --danger-color: #dc3545;
+            --info-color: #17a2b8; /* Warna untuk butang download */
             --card-bg: rgba(255, 255, 255, 0.95);
         }
 
@@ -42,7 +45,7 @@
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 1300px; /* Lebar ditambah */
+            max-width: 1300px;
             margin: 0 auto;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.5);
@@ -146,6 +149,9 @@
         .btn-refresh { background-color: #e2e6ea; color: #333; }
         .btn-refresh:hover { background-color: #dbe0e5; }
 
+        .btn-download { background-color: #217346; color: white; } /* Warna Excel */
+        .btn-download:hover { background-color: #1e6b41; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+
         .btn-approve-all { 
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); 
             color: white; 
@@ -182,7 +188,7 @@
             text-transform: uppercase;
             font-size: 0.85em;
             letter-spacing: 0.5px;
-            cursor: pointer; /* Menunjukkan boleh klik */
+            cursor: pointer;
             user-select: none;
         }
         
@@ -318,6 +324,9 @@
         </div>
         <div class="action-buttons">
             <button class="btn-refresh" onclick="loadData()"><i class="fas fa-sync-alt"></i> Refresh</button>
+            <!-- Butang Excel -->
+            <button class="btn-download" onclick="downloadExcel()"><i class="fas fa-file-excel"></i> Muat Turun Excel</button>
+            
             <button class="btn-approve-all" id="btnBulkApprove" onclick="bulkApprove()" disabled>
                 <i class="fas fa-check-double"></i> Sahkan Pilihan (<span id="selectedCount">0</span>)
             </button>
@@ -545,7 +554,6 @@
 
     // 3. Fungsi Sort (Susun)
     window.sortTable = function(key) {
-        // Toggle order
         if (currentSort.key === key) {
             currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
         } else {
@@ -553,10 +561,7 @@
             currentSort.order = 'asc';
         }
         
-        // Sort data array
         sortDataArray(allData, currentSort.key, currentSort.order);
-        
-        // Re-render
         renderTable(allData);
     }
 
@@ -565,7 +570,6 @@
             let valA = (a[key] || '').toString().toLowerCase();
             let valB = (b[key] || '').toString().toLowerCase();
 
-            // Special handling for Membership Number to sort numerically
             if (key === 'no_keahlian') {
                 valA = parseInt(valA) || 0;
                 valB = parseInt(valB) || 0;
@@ -580,15 +584,12 @@
     // 4. Auto-Format Input ID (000001)
     window.formatIdInput = function(input) {
         if(input.value.trim() !== "") {
-            // Pad start dengan 0 sehingga 6 digit
             input.value = input.value.trim().padStart(6, '0');
-            // Trigger change event manually to save if needed, though onchange handles save
         }
     }
 
     // 5. Fungsi Update No. Keahlian
     window.updateMemberId = async function(docId, newValue) {
-        // Format value first
         const formattedValue = newValue.trim().padStart(6, '0');
         
         if (!newValue) return; 
@@ -599,14 +600,12 @@
                 no_keahlian: formattedValue
             });
             
-            // Update local data
             const item = allData.find(i => i.id === docId);
             if (item) item.no_keahlian = formattedValue;
 
-            // Visual Feedback
             const inputField = document.activeElement;
             if(inputField) {
-                inputField.value = formattedValue; // Ensure UI shows formatted
+                inputField.value = formattedValue;
                 inputField.style.borderColor = "#28a745";
                 inputField.style.backgroundColor = "#e8f5e9";
                 setTimeout(() => {
@@ -736,6 +735,63 @@
             document.getElementById('selectAll').checked = false;
             updateBulkButton();
         }
+    }
+
+    // 11. Fungsi Muat Turun Excel (.xlsx) - MENGGUNAKAN SHEETJS
+    window.downloadExcel = function() {
+        if (allData.length === 0) {
+            alert("Tiada data untuk dimuat turun.");
+            return;
+        }
+
+        // Sediakan data dalam format JSON yang bersih untuk Excel
+        const exportData = allData.map(item => ({
+            "Nama Penuh": item.nama || "",
+            "No. IC": item.ic || "", // Simpan sebagai teks
+            "Jantina": item.jantina || "",
+            "Tarikh Lahir": item.dob || "",
+            "Status Perkahwinan": item.status_kahwin || "",
+            "Sektor": item.sektor || "",
+            "Unit": item.unit || "",
+            "Jawatan": item.jawatan || "",
+            "Tarikh Lapor Diri": item.tarikh_mula || "",
+            "Tempoh Khidmat": item.tempoh_khidmat || "",
+            "Tempoh Keahlian Club": item.tempoh_keahlian_club || "",
+            "No. Telefon": item.phone || "",
+            "No. Keahlian": item.no_keahlian || "",
+            "Status": item.status || "",
+            "Foto URL": item.foto_url || ""
+        }));
+
+        // Cipta Worksheet
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        
+        // Tetapkan lebar lajur (pilihan)
+        const wscols = [
+            {wch: 30}, // Nama
+            {wch: 15}, // IC
+            {wch: 10}, // Jantina
+            {wch: 15}, // DOB
+            {wch: 15}, // Status Kahwin
+            {wch: 25}, // Sektor
+            {wch: 15}, // Unit
+            {wch: 25}, // Jawatan
+            {wch: 15}, // Tarikh Lapor
+            {wch: 20}, // Tempoh Khidmat
+            {wch: 20}, // Tempoh Club
+            {wch: 15}, // Tel
+            {wch: 15}, // No Keahlian
+            {wch: 10}, // Status
+            {wch: 30}  // Foto URL
+        ];
+        ws['!cols'] = wscols;
+
+        // Cipta Workbook
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Senarai Ahli");
+
+        // Muat Turun Fail
+        XLSX.writeFile(wb, `Senarai_Ahli_PPD_Club_${new Date().toISOString().slice(0,10)}.xlsx`);
     }
 
     function updateStats() {
