@@ -18,7 +18,8 @@
             --success-color: #28a745;
             --warning-color: #ffc107;
             --danger-color: #dc3545;
-            --info-color: #17a2b8; /* Warna untuk butang download */
+            --block-color: #e74c3c; /* Warna untuk butang sekat */
+            --info-color: #17a2b8;
             --card-bg: rgba(255, 255, 255, 0.95);
         }
 
@@ -149,7 +150,7 @@
         .btn-refresh { background-color: #e2e6ea; color: #333; }
         .btn-refresh:hover { background-color: #dbe0e5; }
 
-        .btn-download { background-color: #217346; color: white; } /* Warna Excel */
+        .btn-download { background-color: #217346; color: white; }
         .btn-download:hover { background-color: #1e6b41; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
 
         .btn-approve-all { 
@@ -199,7 +200,7 @@
 
         tr:hover { background-color: #f1f5f9; }
 
-        /* Avatar / Foto */
+        /* Avatar */
         .table-avatar {
             width: 50px;
             height: 50px;
@@ -240,6 +241,7 @@
 
         .badge-new { background-color: #ffeeba; color: #856404; }
         .badge-approved { background-color: #d4edda; color: #155724; }
+        .badge-blocked { background-color: #f8d7da; color: #721c24; } /* Merah untuk Disekat */
 
         /* Action Icons */
         .btn-icon {
@@ -257,8 +259,11 @@
         .btn-check { background-color: var(--success-color); }
         .btn-check:hover { background-color: #218838; }
         
-        .btn-delete { background-color: var(--danger-color); }
-        .btn-delete:hover { background-color: #c82333; }
+        .btn-block { background-color: var(--block-color); } /* Butang Sekat */
+        .btn-block:hover { background-color: #c0392b; }
+
+        .btn-delete { background-color: #555; }
+        .btn-delete:hover { background-color: #333; }
 
         /* Loader */
         .loader-container {
@@ -277,11 +282,7 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Checkbox custom */
-        .custom-checkbox {
-            transform: scale(1.2);
-            cursor: pointer;
-        }
+        .custom-checkbox { transform: scale(1.2); cursor: pointer; }
     </style>
 </head>
 <body>
@@ -314,6 +315,11 @@
             <div class="stat-number" id="approvedCount" style="color: var(--success-color);">0</div>
             <div class="stat-label">Disahkan</div>
         </div>
+        <!-- Statistik Disekat -->
+        <div class="stat-card" style="border-color: var(--danger-color);">
+            <div class="stat-number" id="blockedCount" style="color: var(--danger-color);">0</div>
+            <div class="stat-label">Disekat / Ditolak</div>
+        </div>
     </div>
 
     <!-- Kawalan -->
@@ -324,7 +330,6 @@
         </div>
         <div class="action-buttons">
             <button class="btn-refresh" onclick="loadData()"><i class="fas fa-sync-alt"></i> Refresh</button>
-            <!-- Butang Excel -->
             <button class="btn-download" onclick="downloadExcel()"><i class="fas fa-file-excel"></i> Muat Turun Excel</button>
             
             <button class="btn-approve-all" id="btnBulkApprove" onclick="bulkApprove()" disabled>
@@ -381,8 +386,8 @@
     // Initialize Firebase
     let db;
     let currentUser = null;
-    let allData = []; // Simpan data tempatan
-    let currentSort = { key: 'status', order: 'asc' }; // Simpan state susunan semasa
+    let allData = []; 
+    let currentSort = { key: 'status', order: 'asc' }; 
 
     try {
         const app = initializeApp(firebaseConfig);
@@ -411,7 +416,6 @@
 
     // --- FUNGSI UTAMA ---
 
-    // 1. Muat Turun Data (Load Data)
     window.loadData = async function() {
         if (!db) return;
         
@@ -427,26 +431,14 @@
             const querySnapshot = await getDocs(collection(db, 'ppd_registrations'));
             
             allData = [];
-            let total = 0;
-            let pending = 0;
-            let approved = 0;
-
+            
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
                 data.id = doc.id; 
                 allData.push(data);
-
-                if (data.status === 'DISAHKAN') {
-                    approved++;
-                } else {
-                    pending++;
-                }
-                total++;
             });
 
-            document.getElementById('totalCount').innerText = total;
-            document.getElementById('pendingCount').innerText = pending;
-            document.getElementById('approvedCount').innerText = approved;
+            updateStats(); // Kemaskini statistik termasuk "Blocked"
 
             // Sort data based on currentSort state
             sortDataArray(allData, currentSort.key, currentSort.order);
@@ -466,7 +458,6 @@
         return ic.substring(0, 6) + '-' + ic.substring(6, 8) + '-****';
     }
 
-    // Fungsi Pembantu: Cari Nombor Keahlian Tertinggi Seterusnya
     function getNextMembershipId() {
         let maxId = 0;
         allData.forEach(item => {
@@ -478,7 +469,6 @@
             }
         });
         const nextId = maxId + 1;
-        // Format ke 6 digit: 000001
         return nextId.toString().padStart(6, '0');
     }
 
@@ -492,22 +482,37 @@
             return;
         }
 
-        // Kira "Next ID" sekali sahaja untuk prestasi
         const suggestionId = getNextMembershipId();
 
         dataArray.forEach((item) => {
-            const isApproved = item.status === 'DISAHKAN';
-            const statusBadge = isApproved 
-                ? `<span class="badge badge-approved">DISAHKAN</span>` 
-                : `<span class="badge badge-new">BARU</span>`;
-            
-            const approveBtn = isApproved 
-                ? `<button class="btn-icon" style="background:#ccc; cursor:default;" title="Sudah Disahkan"><i class="fas fa-check"></i></button>`
-                : `<button class="btn-icon btn-check" onclick="verifySingle('${item.id}')" title="Sahkan Permohonan"><i class="fas fa-check"></i></button>`;
+            let statusBadge;
+            let actionButtons;
+
+            // Logik Status & Butang
+            if (item.status === 'DISAHKAN') {
+                statusBadge = `<span class="badge badge-approved">DISAHKAN</span>`;
+                actionButtons = `
+                    <button class="btn-icon" style="background:#ccc; cursor:default;" title="Sudah Disahkan"><i class="fas fa-check"></i></button>
+                    <button class="btn-icon btn-block" onclick="blockSingle('${item.id}')" title="Sekat / Tolak"><i class="fas fa-ban"></i></button>
+                    <button class="btn-icon btn-delete" onclick="deleteSingle('${item.id}', '${item.nama}')" title="Hapus"><i class="fas fa-trash"></i></button>
+                `;
+            } else if (item.status === 'DISEKAT') {
+                statusBadge = `<span class="badge badge-blocked">DISEKAT</span>`;
+                actionButtons = `
+                    <button class="btn-icon btn-check" onclick="verifySingle('${item.id}')" title="Nyah-sekat & Sahkan"><i class="fas fa-check"></i></button>
+                    <button class="btn-icon btn-delete" onclick="deleteSingle('${item.id}', '${item.nama}')" title="Hapus"><i class="fas fa-trash"></i></button>
+                `;
+            } else {
+                // Pending / Baru
+                statusBadge = `<span class="badge badge-new">BARU</span>`;
+                actionButtons = `
+                    <button class="btn-icon btn-check" onclick="verifySingle('${item.id}')" title="Sahkan Permohonan"><i class="fas fa-check"></i></button>
+                    <button class="btn-icon btn-block" onclick="blockSingle('${item.id}')" title="Sekat / Tolak"><i class="fas fa-ban"></i></button>
+                    <button class="btn-icon btn-delete" onclick="deleteSingle('${item.id}', '${item.nama}')" title="Hapus"><i class="fas fa-trash"></i></button>
+                `;
+            }
 
             const photoUrl = item.foto_url ? item.foto_url : 'https://via.placeholder.com/50?text=USER';
-
-            // Jika belum ada ID, guna suggestion dalam placeholder
             const currentIdVal = item.no_keahlian || '';
             const placeholderVal = currentIdVal ? '' : suggestionId;
 
@@ -539,8 +544,7 @@
                     <td>${statusBadge}</td>
                     <td style="text-align: center;">
                         <div style="display:flex; justify-content:center; gap:5px;">
-                            ${approveBtn}
-                            <button class="btn-icon btn-delete" onclick="deleteSingle('${item.id}', '${item.nama}')" title="Hapus"><i class="fas fa-trash"></i></button>
+                            ${actionButtons}
                         </div>
                     </td>
                 </tr>
@@ -552,7 +556,6 @@
         updateBulkButton();
     }
 
-    // 3. Fungsi Sort (Susun)
     window.sortTable = function(key) {
         if (currentSort.key === key) {
             currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
@@ -581,24 +584,19 @@
         });
     }
 
-    // 4. Auto-Format Input ID (000001)
     window.formatIdInput = function(input) {
         if(input.value.trim() !== "") {
             input.value = input.value.trim().padStart(6, '0');
         }
     }
 
-    // 5. Fungsi Update No. Keahlian
     window.updateMemberId = async function(docId, newValue) {
         const formattedValue = newValue.trim().padStart(6, '0');
-        
         if (!newValue) return; 
 
         try {
             const userRef = doc(db, 'ppd_registrations', docId);
-            await updateDoc(userRef, {
-                no_keahlian: formattedValue
-            });
+            await updateDoc(userRef, { no_keahlian: formattedValue });
             
             const item = allData.find(i => i.id === docId);
             if (item) item.no_keahlian = formattedValue;
@@ -613,15 +611,12 @@
                     inputField.style.backgroundColor = "white";
                 }, 1000);
             }
-            console.log("No Keahlian dikemaskini:", formattedValue);
-
         } catch (error) {
             console.error("Gagal simpan No Keahlian:", error);
             alert("Gagal menyimpan No. Keahlian.");
         }
     }
 
-    // 6. Fungsi Carian
     window.searchTable = function() {
         const input = document.getElementById('searchInput').value.toUpperCase();
         const filtered = allData.filter(item => {
@@ -632,16 +627,14 @@
         renderTable(filtered);
     }
 
-    // 7. Sahkan Individu
+    // --- ACTIONS ---
+
+    // 1. Verify / Sahkan
     window.verifySingle = async function(docId) {
         if (!confirm("Adakah anda pasti ingin mengesahkan keahlian ini?")) return;
-
         try {
             const userRef = doc(db, 'ppd_registrations', docId);
-            await updateDoc(userRef, {
-                status: "DISAHKAN",
-                verifiedAt: new Date().toISOString()
-            });
+            await updateDoc(userRef, { status: "DISAHKAN", verifiedAt: new Date().toISOString() });
             
             const item = allData.find(x => x.id === docId);
             if (item) item.status = "DISAHKAN";
@@ -649,33 +642,46 @@
             alert("Permohonan berjaya disahkan!");
             renderTable(allData); 
             updateStats();
-
         } catch (error) {
             console.error("Error verifying:", error);
             alert("Gagal mengesahkan. Sila cuba lagi.");
         }
     }
 
-    // 8. Hapus Individu
+    // 2. Block / Sekat
+    window.blockSingle = async function(docId) {
+        if (!confirm("Adakah anda pasti ingin MENYEKAT permohonan ini?")) return;
+        try {
+            const userRef = doc(db, 'ppd_registrations', docId);
+            await updateDoc(userRef, { status: "DISEKAT", blockedAt: new Date().toISOString() });
+            
+            const item = allData.find(x => x.id === docId);
+            if (item) item.status = "DISEKAT";
+            
+            alert("Permohonan berjaya disekat.");
+            renderTable(allData); 
+            updateStats();
+        } catch (error) {
+            console.error("Error blocking:", error);
+            alert("Gagal menyekat.");
+        }
+    }
+
+    // 3. Delete / Hapus
     window.deleteSingle = async function(docId, name) {
         if (!confirm(`AMARAN: Adakah anda pasti ingin memadam rekod ${name}?\nTindakan ini tidak boleh dikembalikan.`)) return;
-
         try {
             await deleteDoc(doc(db, 'ppd_registrations', docId));
-            
             allData = allData.filter(x => x.id !== docId);
-            
             renderTable(allData);
             updateStats();
             alert("Rekod berjaya dipadam.");
-
         } catch (error) {
             console.error("Error deleting:", error);
             alert("Gagal memadam rekod.");
         }
     }
 
-    // 9. Logik Checkbox & Bulk Action
     window.toggleSelectAll = function() {
         const masterCheck = document.getElementById('selectAll');
         const rows = document.querySelectorAll('.select-row');
@@ -687,16 +693,13 @@
         const checkedBoxes = document.querySelectorAll('.select-row:checked');
         const btn = document.getElementById('btnBulkApprove');
         const countSpan = document.getElementById('selectedCount');
-        
         countSpan.innerText = checkedBoxes.length;
         btn.disabled = checkedBoxes.length === 0;
     }
 
-    // 10. Sahkan Secara Pukal
     window.bulkApprove = async function() {
         const checkedBoxes = document.querySelectorAll('.select-row:checked');
         if (checkedBoxes.length === 0) return;
-
         if (!confirm(`Sahkan ${checkedBoxes.length} permohonan terpilih?`)) return;
 
         const btn = document.getElementById('btnBulkApprove');
@@ -705,27 +708,20 @@
         btn.disabled = true;
 
         let successCount = 0;
-
         try {
             for (const cb of checkedBoxes) {
                 const docId = cb.value;
                 const userRef = doc(db, 'ppd_registrations', docId);
-                
                 const item = allData.find(x => x.id === docId);
                 if (item && item.status !== 'DISAHKAN') {
-                    await updateDoc(userRef, {
-                        status: "DISAHKAN",
-                        verifiedAt: new Date().toISOString()
-                    });
+                    await updateDoc(userRef, { status: "DISAHKAN", verifiedAt: new Date().toISOString() });
                     item.status = "DISAHKAN";
                     successCount++;
                 }
             }
-
             alert(`Proses selesai! ${successCount} permohonan telah disahkan.`);
             renderTable(allData);
             updateStats();
-
         } catch (error) {
             console.error("Bulk error:", error);
             alert("Berlaku ralat semasa proses pukal.");
@@ -737,17 +733,14 @@
         }
     }
 
-    // 11. Fungsi Muat Turun Excel (.xlsx) - MENGGUNAKAN SHEETJS
     window.downloadExcel = function() {
         if (allData.length === 0) {
             alert("Tiada data untuk dimuat turun.");
             return;
         }
-
-        // Sediakan data dalam format JSON yang bersih untuk Excel
         const exportData = allData.map(item => ({
             "Nama Penuh": item.nama || "",
-            "No. IC": item.ic || "", // Simpan sebagai teks
+            "No. IC": item.ic || "", 
             "Jantina": item.jantina || "",
             "Tarikh Lahir": item.dob || "",
             "Status Perkahwinan": item.status_kahwin || "",
@@ -762,48 +755,33 @@
             "Status": item.status || "",
             "Foto URL": item.foto_url || ""
         }));
-
-        // Cipta Worksheet
         const ws = XLSX.utils.json_to_sheet(exportData);
-        
-        // Tetapkan lebar lajur (pilihan)
         const wscols = [
-            {wch: 30}, // Nama
-            {wch: 15}, // IC
-            {wch: 10}, // Jantina
-            {wch: 15}, // DOB
-            {wch: 15}, // Status Kahwin
-            {wch: 25}, // Sektor
-            {wch: 15}, // Unit
-            {wch: 25}, // Jawatan
-            {wch: 15}, // Tarikh Lapor
-            {wch: 20}, // Tempoh Khidmat
-            {wch: 20}, // Tempoh Club
-            {wch: 15}, // Tel
-            {wch: 15}, // No Keahlian
-            {wch: 10}, // Status
-            {wch: 30}  // Foto URL
+            {wch: 30}, {wch: 15}, {wch: 10}, {wch: 15}, {wch: 15},
+            {wch: 25}, {wch: 15}, {wch: 25}, {wch: 15}, {wch: 20},
+            {wch: 20}, {wch: 15}, {wch: 15}, {wch: 10}, {wch: 30}
         ];
         ws['!cols'] = wscols;
-
-        // Cipta Workbook
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Senarai Ahli");
-
-        // Muat Turun Fail
         XLSX.writeFile(wb, `Senarai_Ahli_PPD_Club_${new Date().toISOString().slice(0,10)}.xlsx`);
     }
 
     function updateStats() {
         let pending = 0;
         let approved = 0;
+        let blocked = 0;
+        
         allData.forEach(item => {
             if (item.status === 'DISAHKAN') approved++;
+            else if (item.status === 'DISEKAT') blocked++;
             else pending++;
         });
+        
         document.getElementById('totalCount').innerText = allData.length;
         document.getElementById('pendingCount').innerText = pending;
         document.getElementById('approvedCount').innerText = approved;
+        document.getElementById('blockedCount').innerText = blocked;
     }
 
 </script>
