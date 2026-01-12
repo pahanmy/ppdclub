@@ -6,6 +6,8 @@
     <title>Pendaftaran Keahlian PPD CLUB - PPD Miri</title>
     <!-- Import Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Libre+Barcode+39+Text&display=swap" rel="stylesheet">
+    <!-- Tambah FontAwesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
         :root {
@@ -44,7 +46,7 @@
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 600px; /* Lebarkan sedikit untuk muat table */
+            max-width: 600px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.5);
             animation: slideUp 0.6s ease-out;
@@ -65,7 +67,6 @@
             width: 180px; 
             height: auto;
             margin-bottom: 10px;
-            /* mix-blend-mode: multiply; Buang ini jika logo sudah transparent */
             filter: contrast(1.1);
             transition: transform 0.3s ease;
         }
@@ -91,21 +92,30 @@
             font-weight: 300;
         }
         
-        /* WhatsApp Button - Floating feel */
+        /* Contact & Link Buttons Container */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        /* WhatsApp Button */
         .whatsapp-link {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             background: white;
             color: #25D366;
-            padding: 10px 20px;
+            padding: 8px 15px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
             font-size: 0.85em;
-            margin-top: 15px;
             box-shadow: 0 5px 15px rgba(37, 211, 102, 0.2);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #25D366;
         }
 
         .whatsapp-link:hover {
@@ -113,6 +123,34 @@
             box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
             background: #25D366;
             color: white;
+        }
+
+        /* Wall of Members Button */
+        .wall-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, #FFD700, #FDB931);
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85em;
+            box-shadow: 0 5px 15px rgba(253, 185, 49, 0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #FDB931;
+        }
+
+        .wall-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(253, 185, 49, 0.5);
+            background: #fff;
+            color: #FDB931;
+        }
+
+        .wall-link i {
+            margin-right: 5px;
         }
 
         /* Modern Tabs */
@@ -637,10 +675,18 @@
         <h2>Pendaftaran Keahlian PPD CLUB</h2>
         <p>PEJABAT PENDIDIKAN DAERAH MIRI</p>
         
-        <!-- Pautan WhatsApp Admin dengan Teks Pre-filled -->
-        <a href="https://wa.me/60135792215?text=Salam%20Admin%2C%20saya%20ada%20pertanyaan%20mengenai%20Pendaftaran%20PPD%20Club." target="_blank" class="whatsapp-link">
-            📞 Ada Pertanyaan? Hubungi Admin
-        </a>
+        <!-- Action Buttons Container -->
+        <div class="header-actions">
+            <!-- Pautan WhatsApp Admin -->
+            <a href="https://wa.me/60135792215?text=Salam%20Admin%2C%20saya%20ada%20pertanyaan%20mengenai%20Pendaftaran%20PPD%20Club." target="_blank" class="whatsapp-link">
+                <i class="fab fa-whatsapp"></i> Hubungi Admin
+            </a>
+            
+            <!-- Butang Wall of Members -->
+            <a href="member.html" class="wall-link" target="_blank">
+                <i class="fas fa-users"></i> Lihat Semua Ahli
+            </a>
+        </div>
     </div>
 
     <!-- TABS NAVIGASI -->
