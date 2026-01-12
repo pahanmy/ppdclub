@@ -881,6 +881,14 @@
         }
     });
 
+    // Tambahan: Pastikan input semakan IC juga hanya nombor
+    const checkIcInput = document.getElementById('check_ic');
+    if (checkIcInput) {
+        checkIcInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    }
+
     startDateInput.addEventListener('change', function() {
         const start = new Date(this.value);
         const now = new Date();
@@ -1013,7 +1021,15 @@
                 document.getElementById('checkFooter').style.display = 'block';
                 document.getElementById('confirmModal').style.display = 'block';
             } else {
-                alert("Tiada rekod ditemui. Sila daftar dahulu.");
+                // Cadangan daftar terus jika tiada rekod
+                if (confirm("Tiada rekod ditemui untuk No. IC: " + checkIC + ".\n\nAdakah anda berminat untuk mendaftar keahlian sekarang?")) {
+                    switchTab('daftar');
+                    // Pra-isi nombor IC di borang pendaftaran
+                    const regIC = document.getElementById('ic_number');
+                    regIC.value = checkIC;
+                    // Trigger event 'input' supaya logik ekstrak data berjalan
+                    regIC.dispatchEvent(new Event('input'));
+                }
             }
         } catch (error) {
             console.error(error);
