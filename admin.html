@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - PPD CLUB Miri</title>
+    <!-- Import Font & Icon -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #003399 0%, #2575fc 100%);
+            --primary-color: #003399;
+            --secondary-color: #f4f4f4;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --card-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .main-logo {
+            width: 60px;
+            height: auto;
+            mix-blend-mode: multiply; 
+        }
+
+        h2 { margin: 0; color: var(--primary-color); font-weight: 800; text-transform: uppercase; }
+        p { margin: 0; color: #666; font-size: 0.9em; }
+
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            border-bottom: 4px solid var(--primary-color);
+        }
+
+        .stat-number { font-size: 2em; font-weight: 800; color: var(--primary-color); }
+        .stat-label { font-size: 0.9em; color: #777; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-family: inherit;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-refresh { background-color: #e2e6ea; color: #333; }
+        .btn-refresh:hover { background-color: #dbe0e5; }
+
+        .btn-approve-all { 
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); 
+            color: white; 
+            box-shadow: 0 4px 10px rgba(56, 239, 125, 0.3);
+        }
+        .btn-approve-all:hover { transform: translateY(-2px); }
+        .btn-approve-all:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            min-width: 800px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #555;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover { background-color: #f1f5f9; }
+
+        /* Status Badges */
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-new { background-color: #ffeeba; color: #856404; }
+        .badge-approved { background-color: #d4edda; color: #155724; }
+
+        /* Action Icons */
+        .btn-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 2px;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .btn-check { background-color: var(--success-color); }
+        .btn-check:hover { background-color: #218838; }
+        
+        .btn-delete { background-color: var(--danger-color); }
+        .btn-delete:hover { background-color: #c82333; }
+
+        /* Loader */
+        .loader-container {
+            text-align: center;
+            padding: 50px;
+            display: none;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Checkbox custom */
+        .custom-checkbox {
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="header-title">
+            <img src="https://i.imgur.com/PVu4T7c.png" alt="Logo PPD Club" class="main-logo">
+            <div>
+                <h2>Admin PPD CLUB</h2>
+                <p>Dashboard Pengurusan Keahlian</p>
+            </div>
+        </div>
+        <div style="font-size:0.9em; text-align:right;">
+            Status: <span id="connectionStatus" style="color:orange; font-weight:bold;">Menyambung...</span>
+        </div>
+    </div>
+
+    <!-- Statistik -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-number" id="totalCount">0</div>
+            <div class="stat-label">Jumlah Permohonan</div>
+        </div>
+        <div class="stat-card" style="border-color: var(--warning-color);">
+            <div class="stat-number" id="pendingCount" style="color: var(--warning-color);">0</div>
+            <div class="stat-label">Belum Disahkan</div>
+        </div>
+        <div class="stat-card" style="border-color: var(--success-color);">
+            <div class="stat-number" id="approvedCount" style="color: var(--success-color);">0</div>
+            <div class="stat-label">Disahkan</div>
+        </div>
+    </div>
+
+    <!-- Kawalan -->
+    <div class="controls">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Cari Nama atau IC..." onkeyup="searchTable()">
+        </div>
+        <div class="action-buttons">
+            <button class="btn-refresh" onclick="loadData()"><i class="fas fa-sync-alt"></i> Refresh</button>
+            <button class="btn-approve-all" id="btnBulkApprove" onclick="bulkApprove()" disabled>
+                <i class="fas fa-check-double"></i> Sahkan Pilihan (<span id="selectedCount">0</span>)
+            </button>
+        </div>
+    </div>
+
+    <!-- Jadual -->
+    <div class="table-responsive">
+        <div id="loader" class="loader-container">
+            <div class="loader"></div>
+            <p style="margin-top:15px; color:#666;">Memuatkan data...</p>
+        </div>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th style="width: 40px; text-align: center;">
+                        <input type="checkbox" id="selectAll" class="custom-checkbox" onchange="toggleSelectAll()">
+                    </th>
+                    <th>Nama Ahli</th>
+                    <th>No. IC</th>
+                    <th>Jawatan & Sektor</th>
+                    <th>Tempoh</th>
+                    <th>Status</th>
+                    <th style="text-align: center;">Tindakan</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Data akan dimasukkan di sini -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="module">
+    // Firebase Imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- FIREBASE CONFIGURATION (Sama seperti user) ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyAZC1WyqVSlicy4jRIZyIFmx2rjlrbtfus",
+      authDomain: "ppdclub-e9f2a.firebaseapp.com",
+      projectId: "ppdclub-e9f2a",
+      storageBucket: "ppdclub-e9f2a.firebasestorage.app",
+      messagingSenderId: "72228598666",
+      appId: "1:72228598666:web:1855035320bee1066c0e73"
+    };
+
+    // Initialize Firebase
+    let db;
+    let currentUser = null;
+    let allData = []; // Simpan data tempatan untuk carian pantas
+
+    try {
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        db = getFirestore(app);
+
+        // Auto login anonymous untuk admin (Basic)
+        signInAnonymously(auth).catch((error) => {
+            console.error("Auth Error:", error);
+            document.getElementById('connectionStatus').innerText = "Ralat Auth";
+            document.getElementById('connectionStatus').style.color = "red";
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('connectionStatus').innerText = "Online";
+                document.getElementById('connectionStatus').style.color = "green";
+                loadData(); // Muat turun data bila dah login
+            }
+        });
+
+    } catch (e) {
+        console.error("Firebase Init Error:", e);
+        alert("Ralat Konfigurasi Firebase.");
+    }
+
+    // --- FUNGSI UTAMA ---
+
+    // 1. Muat Turun Data (Load Data)
+    window.loadData = async function() {
+        if (!db) return;
+        
+        const loader = document.getElementById('loader');
+        const tbody = document.getElementById('tableBody');
+        const table = document.getElementById('dataTable');
+        
+        loader.style.display = 'block';
+        table.style.opacity = '0.5';
+        tbody.innerHTML = ''; // Kosongkan jadual
+
+        try {
+            const querySnapshot = await getDocs(collection(db, 'ppd_registrations'));
+            
+            allData = [];
+            let total = 0;
+            let pending = 0;
+            let approved = 0;
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                data.id = doc.id; // Simpan ID dokumen untuk update/delete
+                allData.push(data);
+
+                // Kira statistik
+                if (data.status === 'DISAHKAN') {
+                    approved++;
+                } else {
+                    pending++;
+                }
+                total++;
+            });
+
+            // Update Statistik UI
+            document.getElementById('totalCount').innerText = total;
+            document.getElementById('pendingCount').innerText = pending;
+            document.getElementById('approvedCount').innerText = approved;
+
+            renderTable(allData);
+
+        } catch (error) {
+            console.error("Error loading data:", error);
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Gagal memuatkan data. Sila semak sambungan internet.</td></tr>`;
+        } finally {
+            loader.style.display = 'none';
+            table.style.opacity = '1';
+        }
+    }
+
+    // 2. Render Jadual
+    function renderTable(dataArray) {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+
+        if (dataArray.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px;">Tiada rekod ditemui.</td></tr>`;
+            return;
+        }
+
+        // Susun: Pending di atas, Approved di bawah (Sort)
+        dataArray.sort((a, b) => {
+            const statusA = a.status || '';
+            const statusB = b.status || '';
+            if (statusA === statusB) return 0;
+            return statusA === 'DISAHKAN' ? 1 : -1;
+        });
+
+        dataArray.forEach((item) => {
+            const isApproved = item.status === 'DISAHKAN';
+            const statusBadge = isApproved 
+                ? `<span class="badge badge-approved">DISAHKAN</span>` 
+                : `<span class="badge badge-new">BARU</span>`;
+            
+            const approveBtn = isApproved 
+                ? `<button class="btn-icon" style="background:#ccc; cursor:default;" title="Sudah Disahkan"><i class="fas fa-check"></i></button>`
+                : `<button class="btn-icon btn-check" onclick="verifySingle('${item.id}')" title="Sahkan Permohonan"><i class="fas fa-check"></i></button>`;
+
+            const row = `
+                <tr id="row-${item.id}">
+                    <td style="text-align: center;">
+                        <input type="checkbox" class="select-row custom-checkbox" value="${item.id}" onchange="updateBulkButton()">
+                    </td>
+                    <td>
+                        <strong>${item.nama || '-'}</strong><br>
+                        <small style="color:#888;">${item.phone || '-'}</small>
+                    </td>
+                    <td>${item.ic || '-'}</td>
+                    <td>
+                        ${item.jawatan || '-'}<br>
+                        <small style="color:#666;">${item.sektor || '-'}</small>
+                    </td>
+                    <td>${item.tempoh_keahlian_club || '-'}</td>
+                    <td>${statusBadge}</td>
+                    <td style="text-align: center;">
+                        <div style="display:flex; justify-content:center; gap:5px;">
+                            ${approveBtn}
+                            <button class="btn-icon btn-delete" onclick="deleteSingle('${item.id}', '${item.nama}')" title="Hapus"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+        
+        // Reset checkbox header
+        document.getElementById('selectAll').checked = false;
+        updateBulkButton();
+    }
+
+    // 3. Fungsi Carian (Client-side)
+    window.searchTable = function() {
+        const input = document.getElementById('searchInput').value.toUpperCase();
+        const filtered = allData.filter(item => {
+            const name = (item.nama || '').toUpperCase();
+            const ic = (item.ic || '').toUpperCase();
+            return name.includes(input) || ic.includes(input);
+        });
+        renderTable(filtered);
+    }
+
+    // 4. Sahkan Individu
+    window.verifySingle = async function(docId) {
+        if (!confirm("Adakah anda pasti ingin mengesahkan keahlian ini?")) return;
+
+        try {
+            const userRef = doc(db, 'ppd_registrations', docId);
+            await updateDoc(userRef, {
+                status: "DISAHKAN",
+                verifiedAt: new Date().toISOString()
+            });
+            
+            // Kemaskini data tempatan tanpa refresh penuh
+            const itemIndex = allData.findIndex(x => x.id === docId);
+            if (itemIndex > -1) allData[itemIndex].status = "DISAHKAN";
+            
+            alert("Permohonan berjaya disahkan!");
+            renderTable(allData); // Re-render untuk ubah status
+            
+            // Update stats
+            updateStats();
+
+        } catch (error) {
+            console.error("Error verifying:", error);
+            alert("Gagal mengesahkan. Sila cuba lagi.");
+        }
+    }
+
+    // 5. Hapus Individu
+    window.deleteSingle = async function(docId, name) {
+        if (!confirm(`AMARAN: Adakah anda pasti ingin memadam rekod ${name}?\nTindakan ini tidak boleh dikembalikan.`)) return;
+
+        try {
+            await deleteDoc(doc(db, 'ppd_registrations', docId));
+            
+            // Buang dari array tempatan
+            allData = allData.filter(x => x.id !== docId);
+            
+            renderTable(allData);
+            updateStats();
+            alert("Rekod berjaya dipadam.");
+
+        } catch (error) {
+            console.error("Error deleting:", error);
+            alert("Gagal memadam rekod.");
+        }
+    }
+
+    // 6. Logik Checkbox & Bulk Action
+    window.toggleSelectAll = function() {
+        const masterCheck = document.getElementById('selectAll');
+        const rows = document.querySelectorAll('.select-row');
+        rows.forEach(cb => cb.checked = masterCheck.checked);
+        updateBulkButton();
+    }
+
+    window.updateBulkButton = function() {
+        const checkedBoxes = document.querySelectorAll('.select-row:checked');
+        const btn = document.getElementById('btnBulkApprove');
+        const countSpan = document.getElementById('selectedCount');
+        
+        countSpan.innerText = checkedBoxes.length;
+        btn.disabled = checkedBoxes.length === 0;
+    }
+
+    // 7. Sahkan Secara Pukal (Bulk Verify)
+    window.bulkApprove = async function() {
+        const checkedBoxes = document.querySelectorAll('.select-row:checked');
+        if (checkedBoxes.length === 0) return;
+
+        if (!confirm(`Sahkan ${checkedBoxes.length} permohonan terpilih?`)) return;
+
+        const btn = document.getElementById('btnBulkApprove');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Memproses...`;
+        btn.disabled = true;
+
+        let successCount = 0;
+
+        try {
+            // Proses satu per satu (boleh guna Promise.all untuk lebih pantas, tapi ini lebih selamat untuk elak rate limit)
+            for (const cb of checkedBoxes) {
+                const docId = cb.value;
+                const userRef = doc(db, 'ppd_registrations', docId);
+                
+                // Semak jika belum disahkan
+                const item = allData.find(x => x.id === docId);
+                if (item && item.status !== 'DISAHKAN') {
+                    await updateDoc(userRef, {
+                        status: "DISAHKAN",
+                        verifiedAt: new Date().toISOString()
+                    });
+                    item.status = "DISAHKAN"; // Update local
+                    successCount++;
+                }
+            }
+
+            alert(`Proses selesai! ${successCount} permohonan telah disahkan.`);
+            renderTable(allData);
+            updateStats();
+
+        } catch (error) {
+            console.error("Bulk error:", error);
+            alert("Berlaku ralat semasa proses pukal.");
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            document.getElementById('selectAll').checked = false;
+            updateBulkButton();
+        }
+    }
+
+    // Fungsi Helper untuk update stats tanpa fetch semula database
+    function updateStats() {
+        let pending = 0;
+        let approved = 0;
+        allData.forEach(item => {
+            if (item.status === 'DISAHKAN') approved++;
+            else pending++;
+        });
+        document.getElementById('totalCount').innerText = allData.length;
+        document.getElementById('pendingCount').innerText = pending;
+        document.getElementById('approvedCount').innerText = approved;
+    }
+
+</script>
+
+</body>
+</html>
