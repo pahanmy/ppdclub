@@ -26,14 +26,13 @@
             margin: 0;
             padding: 20px;
             display: flex;
-            /* Perubahan: Susun ke bawah (Column) supaya logo di atas kotak */
-            flex-direction: column;
+            /* Logo di atas kotak (Column) */
+            flex-direction: column; 
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             color: #333;
-            /* Perubahan: Jarak antara logo dan kotak */
-            gap: 20px;
+            gap: 20px; /* Jarak antara logo dan kotak */
         }
 
         @keyframes gradientBG {
@@ -42,21 +41,19 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Perubahan: Animasi Melompat (Float) ditambah */
+        /* Animasi Melompat (Float) */
         @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
 
-        /* Styling untuk Logo Utama (Kini di luar kotak) */
+        /* Styling Logo Utama (Di luar kotak) */
         .main-logo {
             width: 160px; 
             height: auto;
-            /* Tambah shadow supaya jelas atas background warna */
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
             transition: transform 0.3s ease;
-            /* Tambah animasi lompat */
             animation: float 3s ease-in-out infinite;
             z-index: 10;
         }
@@ -159,10 +156,6 @@
             box-shadow: 0 8px 20px rgba(253, 185, 49, 0.5);
             background: #fff;
             color: #FDB931;
-        }
-
-        .wall-link i {
-            margin-right: 5px;
         }
 
         /* Modern Tabs */
@@ -442,15 +435,17 @@
             to { transform: scale(1) translateY(0); opacity: 1; }
         }
 
-        /* PREMIUM MEMBER CARD STYLES */
+        /* PREMIUM MEMBER CARD STYLES - GOLD EDITION */
         .member-card {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
+            /* Latar belakang Emas Mewah */
+            background: radial-gradient(ellipse farthest-corner at right bottom, #FEDB37 0%, #FDB931 8%, #9f7928 30%, #8A6E2F 40%, transparent 80%),
+                        radial-gradient(ellipse farthest-corner at left top, #FFFFFF 0%, #FFFFAC 8%, #D1B464 25%, #5d4a1f 62.5%, #5d4a1f 100%);
+            color: #2c3e50; /* Teks gelap supaya kontras dengan emas */
             padding: 25px;
             border-radius: 16px;
             box-shadow: 
-                0 15px 35px rgba(30, 60, 114, 0.4),
-                inset 0 0 0 1px rgba(255,255,255,0.1);
+                0 15px 35px rgba(138, 110, 47, 0.4),
+                inset 0 0 0 1px rgba(255,255,255,0.4);
             text-align: left;
             position: relative;
             overflow: hidden;
@@ -465,27 +460,22 @@
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background: 
-                radial-gradient(circle at 10% 20%, rgba(255,255,255,0.2) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(255,255,255,0.1) 0%, transparent 20%);
+                linear-gradient(125deg, rgba(255,255,255,0) 40%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 60%);
             pointer-events: none;
+            background-size: 200% 200%;
+            animation: shine 5s infinite;
         }
-
-        /* Garisan Emas hiasan */
-        .member-card::before {
-            content: '';
-            position: absolute;
-            top: 20px; right: 20px;
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            border: 2px solid rgba(255,215,0,0.5);
-            opacity: 0.5;
+        
+        @keyframes shine {
+            0% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-bottom: 1px solid rgba(44, 62, 80, 0.2);
             padding-bottom: 15px;
             margin-bottom: 20px;
             position: relative;
@@ -501,23 +491,23 @@
         .card-logo-img {
             height: 45px;
             width: auto;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
 
         .card-logo {
             font-weight: 800;
             font-size: 1.1em;
             letter-spacing: 1px;
-            background: linear-gradient(to right, #fff, #e0e0e0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            color: #1a252f;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.5);
+            background: none;
+            -webkit-text-fill-color: #1a252f;
         }
 
         .card-subtitle {
             font-size: 0.6em;
-            background: linear-gradient(45deg, #FFD700, #FDB931);
-            color: #000;
+            background: #2c3e50;
+            color: #FDB931;
             padding: 4px 10px;
             border-radius: 20px;
             font-weight: 800;
@@ -525,10 +515,9 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        /* Layout Card Body untuk Imej */
         .card-body {
             display: flex;
-            flex-direction: row; /* Tukar ke row untuk susun gambar sebelah teks */
+            flex-direction: row; 
             gap: 15px;
             position: relative;
             z-index: 2;
@@ -546,12 +535,13 @@
             width: 80px;
             height: 80px;
             border-radius: 10px;
-            border: 2px solid rgba(255,255,255,0.5);
+            border: 2px solid rgba(255,255,255,0.8);
             overflow: hidden;
-            background: rgba(0,0,0,0.2);
+            background: rgba(255,255,255,0.3);
             display: flex;
             justify-content: center;
             align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .card-photo-box img {
@@ -560,28 +550,29 @@
             object-fit: cover;
         }
 
-        .card-field {
-            margin-bottom: 0;
-        }
+        .card-field { margin-bottom: 0; }
 
         .card-label {
             font-size: 0.6em;
-            opacity: 0.7;
+            opacity: 0.8;
+            color: #4a4a4a;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 2px;
+            font-weight: 600;
         }
 
         .card-value {
             font-size: 1.1em;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            color: #000;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.4);
         }
 
         .barcode-container {
-            background: white;
+            background: rgba(255,255,255,0.9);
             color: black;
             padding: 10px;
             text-align: center;
@@ -683,17 +674,16 @@
 
 <div class="container">
     <div class="header">
-        
         <h2>Pendaftaran Keahlian PPD CLUB</h2>
         <p>PEJABAT PENDIDIKAN DAERAH MIRI</p>
         
         <div class="header-actions">
             <a href="https://wa.me/60135792215?text=Salam%20Admin%2C%20saya%20ada%20pertanyaan%20mengenai%20Pendaftaran%20PPD%20Club." target="_blank" class="whatsapp-link">
-                <i class="fab fa-whatsapp"></i> Hubungi Admin
+                <i class="fab fa-whatsapp" style="font-size: 1.3em; margin-right: 8px;"></i> Hubungi Admin
             </a>
             
             <a href="member.html" class="wall-link" target="_blank">
-                <i class="fas fa-users"></i> Lihat Semua Ahli
+                <i class="fas fa-address-card" style="font-size: 1.2em; margin-right: 8px;"></i> Lihat Semua Ahli
             </a>
         </div>
     </div>
@@ -920,6 +910,14 @@
                     </table>
                 </div>
 
+                <div class="checkbox-group" style="background-color: #fffbf0; border-color: #ffd700;">
+                    <input type="checkbox" id="physical_card_opt" name="physical_card_opt">
+                    <label for="physical_card_opt">
+                        <strong>TEMPAHAN KAD FIZIKAL (PVC) - RM13.00</strong><br>
+                        <span style="font-size:0.9em; color:#666;">Tanda kotak ini jika anda ingin menempah kad fizikal keras (PVC) dengan bayaran tambahan.</span>
+                    </label>
+                </div>
+
                 <div class="checkbox-group">
                     <input type="checkbox" id="agreement_check" name="agreement_check" required>
                     <label for="agreement_check">
@@ -1003,7 +1001,7 @@
                         </div>
                         <div class="card-field" style="text-align: right;">
                             <div class="card-label">NO. KEAHLIAN / MEMBER NO</div>
-                            <div class="card-value" id="cardMemberID" style="color: #FFD700; letter-spacing: 1px;">-</div>
+                            <div class="card-value" id="cardMemberID" style="color: #000; letter-spacing: 1px;">-</div>
                         </div>
                     </div>
 
@@ -1021,7 +1019,7 @@
         </div>
 
         <div id="registerFooter">
-            <div style="margin-top: 15px; font-size: 1.1em; background:#f8f9fa; padding:10px; border-radius:10px;">
+            <div id="feeDisplay" style="margin-top: 15px; font-size: 1.1em; background:#f8f9fa; padding:15px; border-radius:10px; line-height: 1.5;">
                 YURAN TAHUNAN: <span style="color:var(--accent-color); font-weight:900;">RM60.00</span>
             </div>
             
@@ -1467,12 +1465,17 @@
         const ic = document.getElementById('ic_number').value;
         const clubDuration = document.getElementById('hidden_club_duration').value;
         const fotoUrl = document.getElementById('foto_url').value;
+        
+        // Ambil status checkbox kad fizikal
+        const wantPhysicalCard = document.getElementById('physical_card_opt').checked;
+
         let jawatan = document.getElementById('jawatan_select').value;
         if (jawatan === 'LAIN-LAIN') jawatan = document.getElementById('jawatan_custom').value;
 
         if(!fullname || !sector || !status || !startDate || !phone || !jawatan) { alert("SILA LENGKAPKAN SEMUA MAKLUMAT BERTANDA."); return; }
         if (!agreement.checked) { alert("SILA TANDAKAN KOTAK PERSETUJUAN."); return; }
 
+        // Papar Maklumat dalam Modal
         document.getElementById('modalTitle').innerText = "SAHKAN MAKLUMAT";
         document.getElementById('modalTitle').style.color = "var(--primary-color)";
         document.getElementById('modalSubtitle').innerText = "Sila semak paparan sebelum menghantar:";
@@ -1483,27 +1486,37 @@
         document.getElementById('cardDuration').innerText = clubDuration || "BARU MENDAFTAR";
         document.getElementById('cardBarcode').innerText = "*" + ic + "*";
         document.getElementById('cardMemberID').innerText = "BARU / PENDING";
-        document.getElementById('cardJoinDate').innerText = formatDate(startDate); // Show Join Date
+        document.getElementById('cardJoinDate').innerText = formatDate(startDate);
         
-        // Handle Photo Preview in Card
+        // Handle Photo
         const cardPhoto = document.getElementById('cardUserPhoto');
-        if (fotoUrl) {
-            cardPhoto.src = fotoUrl;
-        } else {
-            cardPhoto.src = "https://via.placeholder.com/150?text=FOTO";
-        }
+        if (fotoUrl) { cardPhoto.src = fotoUrl; } 
+        else { cardPhoto.src = "https://via.placeholder.com/150?text=FOTO"; }
         
         document.getElementById('cardOverlay').style.display = 'none'; 
+
+        // --- LOGIK KIRAAN BAYARAN ---
+        let baseFee = 60;
+        let cardFee = 13;
+        let totalFee = wantPhysicalCard ? (baseFee + cardFee) : baseFee;
+        let feeHtml = `YURAN KEAHLIAN: <strong>RM${baseFee.toFixed(2)}</strong>`;
+        
+        if (wantPhysicalCard) {
+            feeHtml += `<br>+ KAD FIZIKAL (PVC): <strong>RM${cardFee.toFixed(2)}</strong>`;
+            feeHtml += `<hr style="margin:5px 0; border-top:1px dashed #ccc;">`;
+            feeHtml += `JUMLAH PERLU DIBAYAR: <span style="color:red; font-weight:900; font-size:1.2em;">RM${totalFee.toFixed(2)}</span>`;
+        } else {
+            feeHtml += `<br><span style="color:var(--accent-color); font-weight:900; font-size:1.2em;">TOTAL: RM${totalFee.toFixed(2)}</span>`;
+        }
+        
+        document.getElementById('feeDisplay').innerHTML = feeHtml;
+        // ---------------------------
 
         document.getElementById('registerFooter').style.display = 'block';
         document.getElementById('checkFooter').style.display = 'none';
         
         const btnFinal = document.getElementById('btnFinalSubmit');
-        if (editingDocId) {
-            btnFinal.innerText = "SAHKAN & KEMASKINI";
-        } else {
-            btnFinal.innerText = "SAHKAN & HANTAR";
-        }
+        btnFinal.innerText = editingDocId ? "SAHKAN & KEMASKINI" : "SAHKAN & HANTAR";
 
         document.getElementById('confirmModal').style.display = 'flex';
     }
@@ -1522,6 +1535,9 @@
         let jawatanAkhir = document.getElementById('jawatan_select').value;
         if (jawatanAkhir === 'LAIN-LAIN') jawatanAkhir = document.getElementById('jawatan_custom').value;
 
+        // Ambil nilai checkbox kad fizikal
+        const wantPhysicalCard = document.getElementById('physical_card_opt').checked;
+
         const registrationData = {
             ic: document.getElementById('ic_number').value,
             nama: document.getElementById('fullname').value,
@@ -1534,8 +1550,10 @@
             tarikh_mula: document.getElementById('start_date').value,
             tempoh_khidmat: document.getElementById('hidden_duration').value,
             tempoh_keahlian_club: document.getElementById('hidden_club_duration').value,
-            foto_url: document.getElementById('foto_url').value, // Add Photo URL
+            foto_url: document.getElementById('foto_url').value, 
             phone: document.getElementById('phone').value,
+            // Simpan status tempahan kad
+            tempahan_kad_fizikal: wantPhysicalCard ? "YA" : "TIDAK",
             status: "PENDING", 
             timestamp: new Date().toISOString()
         };
@@ -1560,7 +1578,15 @@
                 await addDoc(collection(db, 'ppd_registrations'), registrationData);
                 document.getElementById('statusMessage').innerText = "PENDAFTARAN BERJAYA!";
                 setTimeout(() => {
-                    alert("PENDAFTARAN DITERIMA!\nStatus kini: MENUNGGU PENGESAHAN.");
+                    // Papar mesej bayaran dalam alert
+                    let msg = "PENDAFTARAN DITERIMA!\nStatus kini: MENUNGGU PENGESAHAN.";
+                    if(wantPhysicalCard) {
+                        msg += "\n\nSila buat bayaran RM73.00 (Yuran + Kad) kepada Bendahari.";
+                    } else {
+                        msg += "\n\nSila buat bayaran RM60.00 kepada Bendahari.";
+                    }
+                    
+                    alert(msg);
                     window.closeModal();
                     document.getElementById('registrationForm').reset();
                     detailsDiv.style.display = 'none';
