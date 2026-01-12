@@ -233,7 +233,7 @@
         // Firebase Imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
@@ -272,21 +272,25 @@
             const loading = document.getElementById('loading');
 
             try {
-                // Ambil semua data (tapis di client-side untuk elak masalah index composite)
+                // Ambil semua data (tapis di client-side)
                 const querySnapshot = await getDocs(collection(db, 'ppd_registrations'));
                 
                 allMembers = [];
 
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    // Hanya paparkan jika STATUS = DISAHKAN dan ADA No. Keahlian
-                    if (data.status === 'DISAHKAN' && data.no_keahlian) {
+                    // LOGIK DIPERBAIKI: Paparkan semua yang DISAHKAN (walaupun tiada no keahlian lagi)
+                    if (data.status === 'DISAHKAN') {
                         allMembers.push(data);
                     }
                 });
 
-                // Susun mengikut No. Keahlian (Numerik)
-                allMembers.sort((a, b) => parseInt(a.no_keahlian) - parseInt(b.no_keahlian));
+                // Susun mengikut No. Keahlian (Jika ada), kemudian Nama
+                allMembers.sort((a, b) => {
+                    const noA = parseInt(a.no_keahlian) || 999999;
+                    const noB = parseInt(b.no_keahlian) || 999999;
+                    return noA - noB;
+                });
 
                 renderMembers(allMembers);
                 
@@ -311,6 +315,7 @@
 
             members.forEach(member => {
                 const photoUrl = member.foto_url ? member.foto_url : 'https://via.placeholder.com/150?text=AHLI';
+                const memberID = member.no_keahlian || "AHLI BARU";
                 
                 const card = `
                     <div class="member-card">
@@ -322,7 +327,7 @@
                             <div class="member-name">${member.nama}</div>
                             <div class="member-position">${member.jawatan}</div>
                             <div class="membership-badge">
-                                <i class="fas fa-id-card"></i> ${member.no_keahlian}
+                                <i class="fas fa-id-card"></i> ${memberID}
                             </div>
                         </div>
                     </div>
