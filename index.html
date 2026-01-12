@@ -13,6 +13,7 @@
             --primary-color: #003399;
             --accent-color: #e74c3c;
             --success-color: #00b09b;
+            --warning-color: #f39c12;
             --card-bg: rgba(255, 255, 255, 0.95);
             --shadow-soft: 0 10px 30px rgba(0, 51, 153, 0.15);
         }
@@ -61,10 +62,9 @@
 
         /* Styling untuk Logo Utama */
         .main-logo {
-            width: 180px; /* Saiz dibesarkan */
+            width: 180px; 
             height: auto;
             margin-bottom: 10px;
-            /* Teknik hilangkan latar putih */
             mix-blend-mode: multiply; 
             filter: contrast(1.1);
             transition: transform 0.3s ease;
@@ -307,6 +307,7 @@
             overflow: hidden;
             margin: 25px 0;
             font-family: 'Poppins', sans-serif;
+            transition: opacity 0.3s;
         }
 
         /* Efek Berkilat/Texture */
@@ -419,6 +420,30 @@
             font-family: 'Libre Barcode 39 Text', cursive;
             font-size: 42px;
             line-height: 1;
+        }
+
+        /* Overlay untuk status PENDING pada kad */
+        .pending-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            backdrop-filter: blur(2px);
+        }
+        
+        .pending-stamp {
+            border: 3px solid #ffc107;
+            color: #ffc107;
+            padding: 10px 20px;
+            font-size: 1.5em;
+            font-weight: 800;
+            transform: rotate(-15deg);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: rgba(0,0,0,0.5);
         }
 
         .modal-buttons {
@@ -714,6 +739,12 @@
         
         <!-- Member Card Preview -->
         <div class="member-card">
+            
+            <!-- Overlay untuk status PENDING -->
+            <div id="cardOverlay" class="pending-overlay">
+                <div class="pending-stamp">MENUNGGU<br>PENGESAHAN</div>
+            </div>
+
             <div class="card-header">
                 <!-- Logo ditambah ke dalam Kad Keahlian -->
                 <div class="card-brand">
@@ -769,7 +800,7 @@
         <div id="checkFooter" style="display: none;">
              <div class="modal-buttons">
                 <button class="btn-cancel" onclick="closeModal()">TUTUP</button>
-                <button class="btn-confirm" onclick="window.print()" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">CETAK KAD</button>
+                <button class="btn-confirm" id="btnPrintCard" onclick="window.print()" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">CETAK KAD</button>
             </div>
         </div>
 
@@ -794,7 +825,6 @@
     const hiddenClubDuration = document.getElementById('hidden_club_duration');
     
     // --- FIREBASE SETUP ---
-    // Using user-provided configuration
     const firebaseConfig = {
       apiKey: "AIzaSyAZC1WyqVSlicy4jRIZyIFmx2rjlrbtfus",
       authDomain: "ppdclub-e9f2a.firebaseapp.com",
@@ -812,8 +842,6 @@
         auth = getAuth(app);
         db = getFirestore(app);
 
-        // Authentication Logic (Anonymous Auth)
-        // Make sure "Anonymous" auth provider is enabled in Firebase Console!
         const initAuth = async () => {
             try {
                 await signInAnonymously(auth);
@@ -934,14 +962,15 @@
         }
     }
 
+    // --- CHECK MEMBERSHIP LOGIC ---
     window.checkMembership = async function() {
         const checkIC = document.getElementById('check_ic').value.replace(/[^0-9]/g, '');
         const loader = document.getElementById('checkLoader');
         if (checkIC.length < 12) { alert("Sila masukkan No. Kad Pengenalan yang lengkap."); return; }
         loader.style.display = 'block';
         if (!db) { alert("Sistem Pangkalan Data tidak dapat dihubungi."); loader.style.display = 'none'; return; }
+        
         try {
-            // Using simpler collection path for custom firebase
             const querySnapshot = await getDocs(collection(db, 'ppd_registrations'));
             let foundData = null;
             querySnapshot.forEach((doc) => {
@@ -949,14 +978,37 @@
                 if (data.ic === checkIC) foundData = data;
             });
             loader.style.display = 'none';
+            
             if (foundData) {
-                document.getElementById('modalTitle').innerText = "STATUS: AKTIF";
-                document.getElementById('modalSubtitle').innerText = "Keahlian anda disahkan.";
+                // Common Card Data
                 document.getElementById('cardName').innerText = foundData.nama;
                 document.getElementById('cardIC').innerText = foundData.ic;
                 document.getElementById('cardJawatan').innerText = foundData.jawatan;
                 document.getElementById('cardDuration').innerText = foundData.tempoh_keahlian_club || "1 TAHUN";
                 document.getElementById('cardBarcode').innerText = "*" + foundData.ic + "*";
+
+                const overlay = document.getElementById('cardOverlay');
+                const printBtn = document.getElementById('btnPrintCard');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalSubtitle = document.getElementById('modalSubtitle');
+
+                // LOGIK STATUS
+                if (foundData.status === 'DISAHKAN') {
+                    // Jika Sah
+                    modalTitle.innerText = "STATUS: AKTIF";
+                    modalTitle.style.color = "var(--success-color)";
+                    modalSubtitle.innerText = "Keahlian anda adalah SAH.";
+                    overlay.style.display = 'none'; // Sembunyi cop pending
+                    printBtn.style.display = 'inline-block'; // Tunjuk butang cetak
+                } else {
+                    // Jika Pending
+                    modalTitle.innerText = "MENUNGGU PENGESAHAN";
+                    modalTitle.style.color = "var(--warning-color)";
+                    modalSubtitle.innerText = "Permohonan anda sedang disemak oleh Admin.";
+                    overlay.style.display = 'flex'; // Tunjuk cop pending
+                    printBtn.style.display = 'none'; // Sorok butang cetak
+                }
+
                 document.getElementById('registerFooter').style.display = 'none';
                 document.getElementById('checkFooter').style.display = 'block';
                 document.getElementById('confirmModal').style.display = 'block';
@@ -965,11 +1017,12 @@
             }
         } catch (error) {
             console.error(error);
-            alert("Ralat sistem. Pastikan 'Firestore' diaktifkan dalam console Firebase.");
+            alert("Ralat sistem.");
             loader.style.display = 'none';
         }
     }
 
+    // --- REGISTRATION PREVIEW LOGIC ---
     window.validateAndPreview = function() {
         const fullname = document.getElementById('fullname').value;
         const sector = document.getElementById('sector').value;
@@ -986,12 +1039,18 @@
         if (!agreement.checked) { alert("SILA TANDAKAN KOTAK PERSETUJUAN."); return; }
 
         document.getElementById('modalTitle').innerText = "SAHKAN MAKLUMAT";
-        document.getElementById('modalSubtitle').innerText = "Semak kad keahlian digital anda:";
+        document.getElementById('modalTitle').style.color = "var(--primary-color)";
+        document.getElementById('modalSubtitle').innerText = "Sila semak paparan sebelum menghantar:";
+        
         document.getElementById('cardName').innerText = fullname;
         document.getElementById('cardIC').innerText = ic;
         document.getElementById('cardJawatan').innerText = jawatan;
         document.getElementById('cardDuration').innerText = clubDuration || "BARU MENDAFTAR";
         document.getElementById('cardBarcode').innerText = "*" + ic + "*";
+        
+        // Hide Pending Overlay during registration preview
+        document.getElementById('cardOverlay').style.display = 'none'; 
+
         document.getElementById('registerFooter').style.display = 'block';
         document.getElementById('checkFooter').style.display = 'none';
         document.getElementById('confirmModal').style.display = 'block';
@@ -999,6 +1058,7 @@
 
     window.closeModal = function() { document.getElementById('confirmModal').style.display = 'none'; }
 
+    // --- FINAL SUBMIT LOGIC ---
     window.finalSubmit = async function() {
         if (!db) { alert("Sistem Pangkalan Data tidak dapat dihubungi."); return; }
         if (!currentUser) { alert("Sistem sedang bersambung... Sila tunggu."); return; }
@@ -1023,16 +1083,16 @@
             tempoh_khidmat: document.getElementById('hidden_duration').value,
             tempoh_keahlian_club: document.getElementById('hidden_club_duration').value,
             phone: document.getElementById('phone').value,
+            status: "PENDING", // Status asal adalah PENDING
             timestamp: new Date().toISOString()
         };
 
         try {
-            // Using simpler collection path for custom firebase
             await addDoc(collection(db, 'ppd_registrations'), registrationData);
             loading.style.display = 'none';
             document.getElementById('statusMessage').innerText = "BERJAYA!";
             setTimeout(() => {
-                alert("PENDAFTARAN DITERIMA!\nTerima kasih.");
+                alert("PENDAFTARAN DITERIMA!\nStatus kini: MENUNGGU PENGESAHAN.");
                 window.closeModal();
                 document.getElementById('registrationForm').reset();
                 detailsDiv.style.display = 'none';
@@ -1041,7 +1101,7 @@
             }, 500);
         } catch (error) {
             console.error('Error:', error);
-            alert("Ralat sistem! Pastikan Rules Firestore membenarkan tulis.");
+            alert("Ralat sistem!");
             loading.style.display = 'none';
             modalBtns.style.display = 'flex';
         }
