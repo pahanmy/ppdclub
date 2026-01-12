@@ -793,38 +793,43 @@
     const clubDurationText = document.getElementById('club_duration_text');
     const hiddenClubDuration = document.getElementById('hidden_club_duration');
     
-    // --- FIREBASE SETUP WITH SAFETY CHECK ---
-    let app, auth, db, appId;
+    // --- FIREBASE SETUP ---
+    // Using user-provided configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAZC1WyqVSlicy4jRIZyIFmx2rjlrbtfus",
+      authDomain: "ppdclub-e9f2a.firebaseapp.com",
+      projectId: "ppdclub-e9f2a",
+      storageBucket: "ppdclub-e9f2a.firebasestorage.app",
+      messagingSenderId: "72228598666",
+      appId: "1:72228598666:web:1855035320bee1066c0e73"
+    };
+
+    let app, auth, db;
     let currentUser = null;
 
     try {
-        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-            const firebaseConfig = JSON.parse(__firebase_config);
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-            appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
 
-            const initAuth = async () => {
-                try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                } catch (error) {
-                    console.error("Auth Error:", error);
-                }
-            };
-            initAuth();
+        // Authentication Logic (Anonymous Auth)
+        // Make sure "Anonymous" auth provider is enabled in Firebase Console!
+        const initAuth = async () => {
+            try {
+                await signInAnonymously(auth);
+            } catch (error) {
+                console.error("Auth Error:", error);
+                document.getElementById('statusMessage').innerText = "Ralat Sambungan Database. Sila semak console.";
+            }
+        };
+        initAuth();
 
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    currentUser = user;
-                    console.log("System Ready. User ID:", user.uid);
-                }
-            });
-        }
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                console.log("System Ready. User ID:", user.uid);
+            }
+        });
     } catch (e) {
         console.error("Error initializing Firebase:", e);
     }
@@ -936,7 +941,8 @@
         loader.style.display = 'block';
         if (!db) { alert("Sistem Pangkalan Data tidak dapat dihubungi."); loader.style.display = 'none'; return; }
         try {
-            const querySnapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'ppd_registrations'));
+            // Using simpler collection path for custom firebase
+            const querySnapshot = await getDocs(collection(db, 'ppd_registrations'));
             let foundData = null;
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
@@ -959,7 +965,7 @@
             }
         } catch (error) {
             console.error(error);
-            alert("Ralat sistem.");
+            alert("Ralat sistem. Pastikan 'Firestore' diaktifkan dalam console Firebase.");
             loader.style.display = 'none';
         }
     }
@@ -1021,7 +1027,8 @@
         };
 
         try {
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'ppd_registrations'), registrationData);
+            // Using simpler collection path for custom firebase
+            await addDoc(collection(db, 'ppd_registrations'), registrationData);
             loading.style.display = 'none';
             document.getElementById('statusMessage').innerText = "BERJAYA!";
             setTimeout(() => {
@@ -1034,7 +1041,7 @@
             }, 500);
         } catch (error) {
             console.error('Error:', error);
-            alert("Ralat sistem!");
+            alert("Ralat sistem! Pastikan Rules Firestore membenarkan tulis.");
             loading.style.display = 'none';
             modalBtns.style.display = 'flex';
         }
