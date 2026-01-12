@@ -18,8 +18,9 @@
             --success-color: #28a745;
             --warning-color: #ffc107;
             --danger-color: #dc3545;
-            --block-color: #e74c3c; /* Warna untuk butang sekat */
+            --block-color: #e74c3c;
             --info-color: #17a2b8;
+            --purple-color: #6f42c1;
             --card-bg: rgba(255, 255, 255, 0.95);
         }
 
@@ -46,7 +47,7 @@
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 1300px;
+            max-width: 1400px;
             margin: 0 auto;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.5);
@@ -72,7 +73,6 @@
         .main-logo {
             width: 80px;
             height: auto;
-            /* mix-blend-mode: multiply; Buang jika logo sudah transparent */
             filter: contrast(1.1);
         }
 
@@ -103,20 +103,25 @@
         .controls {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
 
         .search-box {
             flex: 1;
-            max-width: 300px;
+            min-width: 250px;
             position: relative;
         }
 
         .search-box input {
             width: 100%;
-            padding: 10px 15px 10px 40px;
+            padding: 12px 15px 12px 40px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-family: inherit;
@@ -130,9 +135,20 @@
             color: #aaa;
         }
 
+        .bulk-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8f9fa;
+            padding: 5px 15px;
+            border-radius: 50px;
+            border: 1px solid #eee;
+        }
+
         .action-buttons {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         button {
@@ -146,6 +162,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 0.9em;
         }
 
         .btn-refresh { background-color: #e2e6ea; color: #333; }
@@ -154,6 +171,9 @@
         .btn-download { background-color: #217346; color: white; }
         .btn-download:hover { background-color: #1e6b41; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
 
+        .btn-date-bulk { background-color: var(--purple-color); color: white; }
+        .btn-date-bulk:hover { background-color: #5a32a3; transform: translateY(-2px); }
+        
         .btn-approve-all { 
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); 
             color: white; 
@@ -173,11 +193,11 @@
             width: 100%;
             border-collapse: collapse;
             background: white;
-            min-width: 900px;
+            min-width: 1100px;
         }
 
         th, td {
-            padding: 15px;
+            padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #f0f0f0;
             vertical-align: middle;
@@ -188,10 +208,11 @@
             color: #555;
             font-weight: 700;
             text-transform: uppercase;
-            font-size: 0.85em;
+            font-size: 0.8em;
             letter-spacing: 0.5px;
             cursor: pointer;
             user-select: none;
+            white-space: nowrap;
         }
         
         th:hover {
@@ -201,43 +222,54 @@
 
         tr:hover { background-color: #f1f5f9; }
 
-        /* Avatar */
         .table-avatar {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #eee;
             background-color: #f0f0f0;
         }
 
-        /* Membership Input */
-        .member-id-input {
-            width: 120px;
-            padding: 8px;
-            border: 1px solid #ccc;
+        /* Inputs in Table */
+        .table-input {
+            padding: 6px;
+            border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 0.9em;
-            text-align: center;
-            font-weight: bold;
-            color: var(--primary-color);
+            width: 100%;
+            box-sizing: border-box;
             transition: all 0.3s;
         }
         
-        .member-id-input:focus {
+        .member-id-input {
+            width: 110px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary-color);
+            background-color: #f0f8ff;
+            border-color: #b3d7ff;
+        }
+
+        .date-input {
+            width: 130px;
+            font-family: inherit;
+        }
+        
+        .table-input:focus {
             border-color: var(--primary-color);
             outline: none;
-            background-color: #f0f8ff;
-            box-shadow: 0 0 5px rgba(0,51,153,0.3);
+            box-shadow: 0 0 5px rgba(0,51,153,0.2);
         }
 
         /* Status Badges */
         .badge {
             padding: 5px 10px;
             border-radius: 20px;
-            font-size: 0.75em;
+            font-size: 0.7em;
             font-weight: 700;
             text-transform: uppercase;
+            white-space: nowrap;
         }
 
         .badge-new { background-color: #ffeeba; color: #856404; }
@@ -246,16 +278,21 @@
 
         /* Action Icons */
         .btn-icon {
-            width: 35px;
-            height: 35px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             display: inline-flex;
             justify-content: center;
             align-items: center;
             margin: 0 2px;
             color: white;
-            font-size: 0.9em;
+            font-size: 0.8em;
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.2s;
         }
+        
+        .btn-icon:hover { transform: scale(1.1); }
 
         .btn-check { background-color: var(--success-color); }
         .btn-check:hover { background-color: #218838; }
@@ -265,8 +302,16 @@
 
         .btn-delete { background-color: #555; }
         .btn-delete:hover { background-color: #333; }
+        
+        .btn-reset { 
+            background-color: #e0e0e0; 
+            color: #666; 
+            width: 25px; 
+            height: 25px;
+            font-size: 0.7em;
+        }
+        .btn-reset:hover { background-color: #d0d0d0; color: #333; }
 
-        /* Loader */
         .loader-container {
             text-align: center;
             padding: 50px;
@@ -291,7 +336,6 @@
 <div class="container">
     <div class="header">
         <div class="header-title">
-            <!-- LOGO DIKEMASKINI -->
             <img src="https://i.postimg.cc/3JqzZXqd/TRANSPARENT-BACK-GROUND.png" alt="Logo PPD Club" class="main-logo">
             <div>
                 <h2>Admin PPD CLUB</h2>
@@ -317,7 +361,6 @@
             <div class="stat-number" id="approvedCount" style="color: var(--success-color);">0</div>
             <div class="stat-label">Disahkan</div>
         </div>
-        <!-- Statistik Disekat -->
         <div class="stat-card" style="border-color: var(--danger-color);">
             <div class="stat-number" id="blockedCount" style="color: var(--danger-color);">0</div>
             <div class="stat-label">Disekat / Ditolak</div>
@@ -330,12 +373,23 @@
             <i class="fas fa-search"></i>
             <input type="text" id="searchInput" placeholder="Cari Nama atau IC..." onkeyup="searchTable()">
         </div>
+        
+        <div class="bulk-controls">
+            <label for="bulkDateInput" style="margin:0; font-size:0.85em; font-weight:600; color:#555;">Tarikh Pukal:</label>
+            <input type="date" id="bulkDateInput" class="table-input date-input" style="background:white;">
+            
+            <!-- Butang Set Tarikh Pukal (Removed Disabled Attribute) -->
+            <button class="btn-date-bulk" id="btnBulkDate" onclick="bulkUpdateDate()" title="Set tarikh untuk ahli yang dipilih">
+                <i class="fas fa-calendar-alt"></i> Set Tarikh
+            </button>
+        </div>
+
         <div class="action-buttons">
             <button class="btn-refresh" onclick="loadData()"><i class="fas fa-sync-alt"></i> Refresh</button>
-            <button class="btn-download" onclick="downloadExcel()"><i class="fas fa-file-excel"></i> Muat Turun Excel</button>
+            <button class="btn-download" onclick="downloadExcel()"><i class="fas fa-file-excel"></i> Excel</button>
             
             <button class="btn-approve-all" id="btnBulkApprove" onclick="bulkApprove()" disabled>
-                <i class="fas fa-check-double"></i> Sahkan Pilihan (<span id="selectedCount">0</span>)
+                <i class="fas fa-check-double"></i> Sahkan (<span id="selectedCount">0</span>)
             </button>
         </div>
     </div>
@@ -353,13 +407,14 @@
                     <th style="width: 40px; text-align: center;">
                         <input type="checkbox" id="selectAll" class="custom-checkbox" onchange="toggleSelectAll()">
                     </th>
-                    <th style="width: 70px;">Foto</th>
+                    <th style="width: 60px;">Foto</th>
                     <th onclick="sortTable('nama')">Nama Ahli <i class="fas fa-sort"></i></th>
-                    <th onclick="sortTable('ic')">No. IC (Masked) <i class="fas fa-sort"></i></th>
-                    <th onclick="sortTable('jawatan')">Jawatan & Sektor <i class="fas fa-sort"></i></th>
-                    <th onclick="sortTable('no_keahlian')" style="width: 150px; background-color: #e3f2fd;">No. Keahlian <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable('ic')">No. IC <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable('jawatan')">Jawatan <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable('no_keahlian')" style="width: 140px; background-color: #e3f2fd;">No. Keahlian <i class="fas fa-sort"></i></th>
+                    <th style="width: 160px; background-color: #e8f5e9;">Tarikh Keahlian</th>
                     <th onclick="sortTable('status')">Status <i class="fas fa-sort"></i></th>
-                    <th style="text-align: center;">Tindakan</th>
+                    <th style="text-align: center; width: 120px;">Tindakan</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
@@ -407,6 +462,10 @@
                 currentUser = user;
                 document.getElementById('connectionStatus').innerText = "Online";
                 document.getElementById('connectionStatus').style.color = "green";
+                
+                // Set default bulk date to today
+                document.getElementById('bulkDateInput').valueAsDate = new Date();
+                
                 loadData(); 
             }
         });
@@ -440,15 +499,13 @@
                 allData.push(data);
             });
 
-            updateStats(); // Kemaskini statistik termasuk "Blocked"
-
-            // Sort data based on currentSort state
+            updateStats(); 
             sortDataArray(allData, currentSort.key, currentSort.order);
             renderTable(allData);
 
         } catch (error) {
             console.error("Error loading data:", error);
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">Gagal memuatkan data. Sila semak console untuk ralat.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:red;">Gagal memuatkan data.</td></tr>`;
         } finally {
             loader.style.display = 'none';
             table.style.opacity = '1';
@@ -460,18 +517,24 @@
         return ic.substring(0, 6) + '-' + ic.substring(6, 8) + '-****';
     }
 
-    function getNextMembershipId() {
-        let maxId = 0;
+    function getNextMembershipId(year) {
+        const currentYear = year || new Date().getFullYear();
+        let maxSeq = 0;
+        
         allData.forEach(item => {
-            if (item.no_keahlian) {
-                const num = parseInt(item.no_keahlian, 10);
-                if (!isNaN(num) && num > maxId) {
-                    maxId = num;
+            if (item.no_keahlian && item.no_keahlian.includes('/')) {
+                const parts = item.no_keahlian.split('/');
+                if (parts.length === 2 && parts[1] == currentYear) {
+                    const seq = parseInt(parts[0], 10);
+                    if (!isNaN(seq) && seq > maxSeq) {
+                        maxSeq = seq;
+                    }
                 }
             }
         });
-        const nextId = maxId + 1;
-        return nextId.toString().padStart(6, '0');
+        
+        const nextSeq = maxSeq + 1;
+        return nextSeq.toString().padStart(4, '0') + '/' + currentYear;
     }
 
     // 2. Render Jadual
@@ -480,43 +543,42 @@
         tbody.innerHTML = '';
 
         if (dataArray.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px;">Tiada rekod ditemui.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:30px;">Tiada rekod ditemui.</td></tr>`;
             return;
         }
 
-        const suggestionId = getNextMembershipId();
+        const suggestionId = getNextMembershipId(); 
 
         dataArray.forEach((item) => {
             let statusBadge;
             let actionButtons;
 
-            // Logik Status & Butang
             if (item.status === 'DISAHKAN') {
                 statusBadge = `<span class="badge badge-approved">DISAHKAN</span>`;
                 actionButtons = `
                     <button class="btn-icon" style="background:#ccc; cursor:default;" title="Sudah Disahkan"><i class="fas fa-check"></i></button>
-                    <button class="btn-icon btn-block" onclick="blockSingle('${item.id}')" title="Sekat / Tolak"><i class="fas fa-ban"></i></button>
+                    <button class="btn-icon btn-block" onclick="blockSingle('${item.id}')" title="Sekat"><i class="fas fa-ban"></i></button>
                     <button class="btn-icon btn-delete" onclick="deleteSingle('${item.id}', '${item.nama}')" title="Hapus"><i class="fas fa-trash"></i></button>
                 `;
             } else if (item.status === 'DISEKAT') {
                 statusBadge = `<span class="badge badge-blocked">DISEKAT</span>`;
                 actionButtons = `
-                    <button class="btn-icon btn-check" onclick="verifySingle('${item.id}')" title="Nyah-sekat & Sahkan"><i class="fas fa-check"></i></button>
+                    <button class="btn-icon btn-check" onclick="verifySingle('${item.id}')" title="Nyah-sekat"><i class="fas fa-check"></i></button>
                     <button class="btn-icon btn-delete" onclick="deleteSingle('${item.id}', '${item.nama}')" title="Hapus"><i class="fas fa-trash"></i></button>
                 `;
             } else {
-                // Pending / Baru
                 statusBadge = `<span class="badge badge-new">BARU</span>`;
                 actionButtons = `
-                    <button class="btn-icon btn-check" onclick="verifySingle('${item.id}')" title="Sahkan Permohonan"><i class="fas fa-check"></i></button>
-                    <button class="btn-icon btn-block" onclick="blockSingle('${item.id}')" title="Sekat / Tolak"><i class="fas fa-ban"></i></button>
+                    <button class="btn-icon btn-check" onclick="verifySingle('${item.id}')" title="Sahkan"><i class="fas fa-check"></i></button>
+                    <button class="btn-icon btn-block" onclick="blockSingle('${item.id}')" title="Sekat"><i class="fas fa-ban"></i></button>
                     <button class="btn-icon btn-delete" onclick="deleteSingle('${item.id}', '${item.nama}')" title="Hapus"><i class="fas fa-trash"></i></button>
                 `;
             }
 
-            const photoUrl = item.foto_url ? item.foto_url : 'https://via.placeholder.com/50?text=USER';
+            const photoUrl = item.foto_url ? item.foto_url : 'https://via.placeholder.com/50?text=IMG';
             const currentIdVal = item.no_keahlian || '';
             const placeholderVal = currentIdVal ? '' : suggestionId;
+            const joinDateVal = item.membership_date || ''; 
 
             const row = `
                 <tr id="row-${item.id}">
@@ -530,18 +592,28 @@
                         <strong>${item.nama || '-'}</strong><br>
                         <small style="color:#888;">${item.phone || '-'}</small>
                     </td>
-                    <td style="font-family: monospace; font-size: 1.1em;">${maskIC(item.ic)}</td>
+                    <td style="font-family: monospace;">${maskIC(item.ic)}</td>
                     <td>
                         ${item.jawatan || '-'}<br>
                         <small style="color:#666;">${item.sektor || '-'}</small>
                     </td>
                     <td>
-                        <input type="text" class="member-id-input" 
+                        <input type="text" class="table-input member-id-input" 
                                value="${currentIdVal}" 
                                placeholder="${placeholderVal}"
                                onchange="updateMemberId('${item.id}', this.value)"
-                               onblur="formatIdInput(this)"
-                               title="Masukkan ID dan tekan Enter">
+                               title="Format: 0001/2026">
+                    </td>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:5px;">
+                            <input type="date" class="table-input date-input"
+                                   id="date-${item.id}"
+                                   value="${joinDateVal}"
+                                   onchange="updateMemberDate('${item.id}', this.value)">
+                            <button class="btn-icon btn-reset" onclick="resetMemberDate('${item.id}')" title="Reset Tarikh">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </td>
                     <td>${statusBadge}</td>
                     <td style="text-align: center;">
@@ -558,6 +630,7 @@
         updateBulkButton();
     }
 
+    // 3. Fungsi Sort
     window.sortTable = function(key) {
         if (currentSort.key === key) {
             currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
@@ -565,7 +638,6 @@
             currentSort.key = key;
             currentSort.order = 'asc';
         }
-        
         sortDataArray(allData, currentSort.key, currentSort.order);
         renderTable(allData);
     }
@@ -574,48 +646,125 @@
         arr.sort((a, b) => {
             let valA = (a[key] || '').toString().toLowerCase();
             let valB = (b[key] || '').toString().toLowerCase();
-
-            if (key === 'no_keahlian') {
-                valA = parseInt(valA) || 0;
-                valB = parseInt(valB) || 0;
-            }
-
             if (valA < valB) return order === 'asc' ? -1 : 1;
             if (valA > valB) return order === 'asc' ? 1 : -1;
             return 0;
         });
     }
 
-    window.formatIdInput = function(input) {
-        if(input.value.trim() !== "") {
-            input.value = input.value.trim().padStart(6, '0');
+    // 4. Update No. Keahlian
+    window.updateMemberId = async function(docId, newValue) {
+        if (!newValue) return; 
+        try {
+            const userRef = doc(db, 'ppd_registrations', docId);
+            await updateDoc(userRef, { no_keahlian: newValue });
+            const item = allData.find(i => i.id === docId);
+            if (item) item.no_keahlian = newValue;
+            flashInput(document.activeElement);
+        } catch (error) {
+            console.error("Gagal:", error);
+            alert("Gagal simpan.");
         }
     }
 
-    window.updateMemberId = async function(docId, newValue) {
-        const formattedValue = newValue.trim().padStart(6, '0');
-        if (!newValue) return; 
-
+    // 5. Update Tarikh Keahlian (Satu Persatu)
+    window.updateMemberDate = async function(docId, newDate) {
+        if (!newDate) return;
         try {
             const userRef = doc(db, 'ppd_registrations', docId);
-            await updateDoc(userRef, { no_keahlian: formattedValue });
-            
+            await updateDoc(userRef, { membership_date: newDate });
             const item = allData.find(i => i.id === docId);
-            if (item) item.no_keahlian = formattedValue;
-
-            const inputField = document.activeElement;
-            if(inputField) {
-                inputField.value = formattedValue;
-                inputField.style.borderColor = "#28a745";
-                inputField.style.backgroundColor = "#e8f5e9";
-                setTimeout(() => {
-                    inputField.style.borderColor = "#ccc";
-                    inputField.style.backgroundColor = "white";
-                }, 1000);
-            }
+            if (item) item.membership_date = newDate;
+            flashInput(document.activeElement);
         } catch (error) {
-            console.error("Gagal simpan No Keahlian:", error);
-            alert("Gagal menyimpan No. Keahlian.");
+            console.error("Gagal:", error);
+            alert("Gagal simpan tarikh.");
+        }
+    }
+
+    // Fungsi Baru: Reset Tarikh Keahlian
+    window.resetMemberDate = async function(docId) {
+        if(!confirm("Padam tarikh keahlian ini?")) return;
+        
+        try {
+            const userRef = doc(db, 'ppd_registrations', docId);
+            await updateDoc(userRef, { membership_date: "" });
+            
+            // Update local
+            const item = allData.find(i => i.id === docId);
+            if (item) item.membership_date = "";
+            
+            // Update UI secara langsung tanpa reload
+            const dateInput = document.getElementById(`date-${docId}`);
+            if(dateInput) dateInput.value = "";
+            
+        } catch (error) {
+            console.error("Gagal reset tarikh:", error);
+            alert("Gagal reset tarikh.");
+        }
+    }
+
+    // 6. Update Tarikh Keahlian (Pukal) - DIPERBAIKI
+    window.bulkUpdateDate = async function() {
+        const checkedBoxes = document.querySelectorAll('.select-row:checked');
+        const bulkDate = document.getElementById('bulkDateInput').value;
+
+        if (checkedBoxes.length === 0) {
+            alert("Sila pilih (tick) sekurang-kurangnya satu ahli dalam jadual.");
+            return;
+        }
+        
+        if (!bulkDate) {
+            alert("Sila pilih tarikh pada kotak 'Tarikh Pukal' di atas dahulu.");
+            return;
+        }
+
+        if (!confirm(`Kemaskini tarikh keahlian kepada ${bulkDate} untuk ${checkedBoxes.length} ahli yang dipilih?`)) return;
+
+        const btn = document.getElementById('btnBulkDate');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+        btn.disabled = true;
+
+        let successCount = 0;
+
+        try {
+            for (const cb of checkedBoxes) {
+                const docId = cb.value;
+                const userRef = doc(db, 'ppd_registrations', docId);
+                
+                await updateDoc(userRef, {
+                    membership_date: bulkDate
+                });
+                
+                // Update local data
+                const item = allData.find(x => x.id === docId);
+                if (item) item.membership_date = bulkDate;
+                
+                successCount++;
+            }
+            alert(`Berjaya! Tarikh dikemaskini untuk ${successCount} ahli.`);
+            renderTable(allData); // Re-render to show updates
+        } catch (error) {
+            console.error("Bulk date error:", error);
+            alert("Berlaku ralat.");
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            // Clear selection
+            document.getElementById('selectAll').checked = false;
+            updateBulkButton();
+        }
+    }
+
+    function flashInput(el) {
+        if(el) {
+            el.style.borderColor = "#28a745";
+            el.style.backgroundColor = "#e8f5e9";
+            setTimeout(() => {
+                el.style.borderColor = "#ddd";
+                el.style.backgroundColor = "white";
+            }, 1000);
         }
     }
 
@@ -629,37 +778,47 @@
         renderTable(filtered);
     }
 
-    // --- ACTIONS ---
-
-    // 1. Verify / Sahkan
+    // 6. Verify Single
     window.verifySingle = async function(docId) {
         if (!confirm("Adakah anda pasti ingin mengesahkan keahlian ini?")) return;
         try {
             const userRef = doc(db, 'ppd_registrations', docId);
-            await updateDoc(userRef, { status: "DISAHKAN", verifiedAt: new Date().toISOString() });
-            
             const item = allData.find(x => x.id === docId);
-            if (item) item.status = "DISAHKAN";
+            
+            // Auto generate ID if empty
+            let updates = { status: "DISAHKAN", verifiedAt: new Date().toISOString() };
+            
+            if (!item.no_keahlian) {
+                const nextId = getNextMembershipId(new Date().getFullYear());
+                updates.no_keahlian = nextId;
+                item.no_keahlian = nextId; 
+            }
+            
+            if (!item.membership_date) {
+                const today = new Date().toISOString().slice(0,10);
+                updates.membership_date = today;
+                item.membership_date = today; 
+            }
+
+            await updateDoc(userRef, updates);
+            item.status = "DISAHKAN";
             
             alert("Permohonan berjaya disahkan!");
             renderTable(allData); 
             updateStats();
         } catch (error) {
             console.error("Error verifying:", error);
-            alert("Gagal mengesahkan. Sila cuba lagi.");
+            alert("Gagal mengesahkan.");
         }
     }
 
-    // 2. Block / Sekat
     window.blockSingle = async function(docId) {
         if (!confirm("Adakah anda pasti ingin MENYEKAT permohonan ini?")) return;
         try {
             const userRef = doc(db, 'ppd_registrations', docId);
             await updateDoc(userRef, { status: "DISEKAT", blockedAt: new Date().toISOString() });
-            
             const item = allData.find(x => x.id === docId);
             if (item) item.status = "DISEKAT";
-            
             alert("Permohonan berjaya disekat.");
             renderTable(allData); 
             updateStats();
@@ -669,9 +828,8 @@
         }
     }
 
-    // 3. Delete / Hapus
     window.deleteSingle = async function(docId, name) {
-        if (!confirm(`AMARAN: Adakah anda pasti ingin memadam rekod ${name}?\nTindakan ini tidak boleh dikembalikan.`)) return;
+        if (!confirm(`AMARAN: Adakah anda pasti ingin memadam rekod ${name}?`)) return;
         try {
             await deleteDoc(doc(db, 'ppd_registrations', docId));
             allData = allData.filter(x => x.id !== docId);
@@ -695,13 +853,18 @@
         const checkedBoxes = document.querySelectorAll('.select-row:checked');
         const btn = document.getElementById('btnBulkApprove');
         const countSpan = document.getElementById('selectedCount');
-        countSpan.innerText = checkedBoxes.length;
-        btn.disabled = checkedBoxes.length === 0;
+        
+        const count = checkedBoxes.length;
+        countSpan.innerText = count;
+        
+        btn.disabled = count === 0;
+        // btnDate is no longer disabled by selection count
     }
 
     window.bulkApprove = async function() {
         const checkedBoxes = document.querySelectorAll('.select-row:checked');
         if (checkedBoxes.length === 0) return;
+
         if (!confirm(`Sahkan ${checkedBoxes.length} permohonan terpilih?`)) return;
 
         const btn = document.getElementById('btnBulkApprove');
@@ -710,13 +873,43 @@
         btn.disabled = true;
 
         let successCount = 0;
+        
+        // Find current max seq for ID generation
+        let currentNextIdSeq = 0;
+        const currentYear = new Date().getFullYear();
+        allData.forEach(item => {
+            if (item.no_keahlian && item.no_keahlian.includes('/' + currentYear)) {
+                const seq = parseInt(item.no_keahlian.split('/')[0], 10);
+                if (seq > currentNextIdSeq) currentNextIdSeq = seq;
+            }
+        });
+
         try {
             for (const cb of checkedBoxes) {
                 const docId = cb.value;
                 const userRef = doc(db, 'ppd_registrations', docId);
                 const item = allData.find(x => x.id === docId);
+                
                 if (item && item.status !== 'DISAHKAN') {
-                    await updateDoc(userRef, { status: "DISAHKAN", verifiedAt: new Date().toISOString() });
+                    let updates = {
+                        status: "DISAHKAN",
+                        verifiedAt: new Date().toISOString()
+                    };
+                    
+                    if (!item.no_keahlian) {
+                        currentNextIdSeq++;
+                        const newId = currentNextIdSeq.toString().padStart(4, '0') + '/' + currentYear;
+                        updates.no_keahlian = newId;
+                        item.no_keahlian = newId;
+                    }
+                    
+                    if (!item.membership_date) {
+                         const today = new Date().toISOString().slice(0,10);
+                         updates.membership_date = today;
+                         item.membership_date = today;
+                    }
+
+                    await updateDoc(userRef, updates);
                     item.status = "DISAHKAN";
                     successCount++;
                 }
@@ -754,6 +947,7 @@
             "Tempoh Keahlian Club": item.tempoh_keahlian_club || "",
             "No. Telefon": item.phone || "",
             "No. Keahlian": item.no_keahlian || "",
+            "Tarikh Keahlian": item.membership_date || "",
             "Status": item.status || "",
             "Foto URL": item.foto_url || ""
         }));
@@ -761,7 +955,7 @@
         const wscols = [
             {wch: 30}, {wch: 15}, {wch: 10}, {wch: 15}, {wch: 15},
             {wch: 25}, {wch: 15}, {wch: 25}, {wch: 15}, {wch: 20},
-            {wch: 20}, {wch: 15}, {wch: 15}, {wch: 10}, {wch: 30}
+            {wch: 20}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 10}, {wch: 30}
         ];
         ws['!cols'] = wscols;
         const wb = XLSX.utils.book_new();
@@ -773,13 +967,11 @@
         let pending = 0;
         let approved = 0;
         let blocked = 0;
-        
         allData.forEach(item => {
             if (item.status === 'DISAHKAN') approved++;
             else if (item.status === 'DISEKAT') blocked++;
             else pending++;
         });
-        
         document.getElementById('totalCount').innerText = allData.length;
         document.getElementById('pendingCount').innerText = pending;
         document.getElementById('approvedCount').innerText = approved;
