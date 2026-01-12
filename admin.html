@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - PPD CLUB Miri</title>
-    <!-- Import Font & Icon -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Pendaftaran Keahlian PPD CLUB - PPD Miri</title>
+    <!-- Import Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Libre+Barcode+39+Text&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #003399 0%, #2575fc 100%);
             --primary-color: #003399;
-            --secondary-color: #f4f4f4;
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
+            --accent-color: #e74c3c;
+            --success-color: #00b09b;
+            --warning-color: #f39c12;
             --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow-soft: 0 10px 30px rgba(0, 51, 153, 0.15);
         }
 
         body {
@@ -26,6 +25,9 @@
             animation: gradientBG 15s ease infinite;
             margin: 0;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
             color: #333;
         }
@@ -38,205 +40,464 @@
 
         .container {
             background-color: var(--card-bg);
-            padding: 30px;
+            padding: 40px;
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 550px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .main-logo {
-            width: 60px;
-            height: auto;
-            mix-blend-mode: multiply; 
-        }
-
-        h2 { margin: 0; color: var(--primary-color); font-weight: 800; text-transform: uppercase; }
-        p { margin: 0; color: #666; font-size: 0.9em; }
-
-        /* Stats Cards */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            text-align: center;
             margin-bottom: 30px;
         }
 
-        .stat-card {
+        /* Styling untuk Logo Utama */
+        .main-logo {
+            width: 180px; 
+            height: auto;
+            margin-bottom: 10px;
+            mix-blend-mode: multiply; 
+            filter: contrast(1.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .main-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .header h2 {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+            font-weight: 300;
+        }
+        
+        /* WhatsApp Button - Floating feel */
+        .whatsapp-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            text-align: center;
-            border-bottom: 4px solid var(--primary-color);
+            color: #25D366;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85em;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .stat-number { font-size: 2em; font-weight: 800; color: var(--primary-color); }
-        .stat-label { font-size: 0.9em; color: #777; text-transform: uppercase; letter-spacing: 1px; }
+        .whatsapp-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+            background: #25D366;
+            color: white;
+        }
 
-        /* Controls */
-        .controls {
+        /* Modern Tabs */
+        .nav-tabs {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .search-box {
-            flex: 1;
-            max-width: 300px;
+            background: #f1f3f5;
+            padding: 5px;
+            border-radius: 50px;
+            margin-bottom: 30px;
             position: relative;
         }
 
-        .search-box input {
-            width: 100%;
-            padding: 10px 15px 10px 40px;
-            border: 1px solid #ddd;
-            border-radius: 50px;
-            font-family: inherit;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #aaa;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 50px;
+        .nav-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
             cursor: pointer;
             font-weight: 600;
-            font-family: inherit;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-refresh { background-color: #e2e6ea; color: #333; }
-        .btn-refresh:hover { background-color: #dbe0e5; }
-
-        .btn-approve-all { 
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); 
-            color: white; 
-            box-shadow: 0 4px 10px rgba(56, 239, 125, 0.3);
-        }
-        .btn-approve-all:hover { transform: translateY(-2px); }
-        .btn-approve-all:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
-
-        /* Table */
-        .table-responsive {
-            overflow-x: auto;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            min-width: 800px;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        th {
-            background-color: #f8f9fa;
-            color: #555;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.85em;
-            letter-spacing: 0.5px;
-        }
-
-        tr:hover { background-color: #f1f5f9; }
-
-        /* Status Badges */
-        .badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.75em;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .badge-new { background-color: #ffeeba; color: #856404; }
-        .badge-approved { background-color: #d4edda; color: #155724; }
-
-        /* Action Icons */
-        .btn-icon {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 2px;
-            color: white;
+            color: #777;
+            border-radius: 50px;
+            transition: all 0.3s ease;
             font-size: 0.9em;
         }
 
-        .btn-check { background-color: var(--success-color); }
-        .btn-check:hover { background-color: #218838; }
-        
-        .btn-delete { background-color: var(--danger-color); }
-        .btn-delete:hover { background-color: #c82333; }
-
-        /* Loader */
-        .loader-container {
-            text-align: center;
-            padding: 50px;
-            display: none;
+        .nav-tab.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
+
+        /* Form Styling */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.85em;
+            color: #444;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"], 
+        input[type="number"], 
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            box-sizing: border-box;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"] {
+            text-transform: uppercase;
+        }
+
+        input:focus, select:focus {
+            border-color: #2575fc;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37, 117, 252, 0.1);
+            outline: none;
+        }
+
+        /* Checkbox Styling */
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #fff;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            transition: border-color 0.3s;
+        }
+
+        .checkbox-group:hover {
+            border-color: #2575fc;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-top: 4px;
+            margin-right: 12px;
+            transform: scale(1.3);
+            accent-color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-weight: normal;
+            font-size: 0.9em;
+            line-height: 1.5;
+            color: #555;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        /* Fee Notice */
+        .fee-notice {
+            background: linear-gradient(to right, #fff3cd, #fff8e1);
+            color: #856404;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #ffc107;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.1);
+        }
+
+        .fee-notice ul {
+            margin: 10px 0 0 20px;
+            padding: 0;
+        }
+
+        .fee-notice li {
+            margin-bottom: 5px;
+        }
+
+        /* Buttons */
+        .btn-submit {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(0, 51, 153, 0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(0, 51, 153, 0.4);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 100; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.6); 
+            backdrop-filter: blur(5px);
+            padding-top: 50px;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2% auto; 
+            padding: 30px;
+            border: none;
+            width: 90%; 
+            max-width: 450px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: zoomIn 0.3s;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* PREMIUM MEMBER CARD STYLES */
+        .member-card {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 
+                0 15px 35px rgba(30, 60, 114, 0.4),
+                inset 0 0 0 1px rgba(255,255,255,0.1);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            margin: 25px 0;
+            font-family: 'Poppins', sans-serif;
+            transition: opacity 0.3s;
+        }
+
+        /* Efek Berkilat/Texture */
+        .member-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255,255,255,0.2) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255,255,255,0.1) 0%, transparent 20%);
+            pointer-events: none;
+        }
+
+        /* Garisan Emas hiasan */
+        .member-card::before {
+            content: '';
+            position: absolute;
+            top: 20px; right: 20px;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,215,0,0.5);
+            opacity: 0.5;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-logo-img {
+            height: 45px;
+            width: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .card-logo {
+            font-weight: 800;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .card-subtitle {
+            font-size: 0.6em;
+            background: linear-gradient(45deg, #FFD700, #FDB931);
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-field {
+            margin-bottom: 0;
+        }
+
+        .card-label {
+            font-size: 0.6em;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .card-value {
+            font-size: 1.1em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .barcode-container {
+            background: white;
+            color: black;
+            padding: 10px;
+            text-align: center;
+            margin-top: 20px;
+            border-radius: 8px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .barcode {
+            font-family: 'Libre Barcode 39 Text', cursive;
+            font-size: 42px;
+            line-height: 1;
+        }
+
+        /* Overlay untuk status PENDING pada kad */
+        .pending-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            backdrop-filter: blur(2px);
+        }
+        
+        .pending-stamp {
+            border: 3px solid #ffc107;
+            color: #ffc107;
+            padding: 10px 20px;
+            font-size: 1.5em;
+            font-weight: 800;
+            transform: rotate(-15deg);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .btn-confirm, .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .btn-confirm {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,51,153,0.3);
+        }
+
+        .btn-cancel {
+            background-color: #f1f3f5;
+            color: #555;
+        }
+
+        .btn-confirm:hover, .btn-cancel:hover {
+            transform: scale(1.05);
+        }
+
+        #personal-details {
+            animation: slideUp 0.5s ease-out;
+        }
+
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid var(--primary-color);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             animation: spin 1s linear infinite;
+            display: none;
             margin: 0 auto;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Checkbox custom */
-        .custom-checkbox {
-            transform: scale(1.2);
-            cursor: pointer;
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
@@ -244,83 +505,326 @@
 
 <div class="container">
     <div class="header">
-        <div class="header-title">
-            <img src="https://i.imgur.com/PVu4T7c.png" alt="Logo PPD Club" class="main-logo">
-            <div>
-                <h2>Admin PPD CLUB</h2>
-                <p>Dashboard Pengurusan Keahlian</p>
+        <!-- Logo Utama Ditambah -->
+        <img src="https://i.imgur.com/PVu4T7c.png" alt="Logo PPD Club" class="main-logo">
+        
+        <h2>Pendaftaran Keahlian PPD CLUB</h2>
+        <p>PEJABAT PENDIDIKAN DAERAH MIRI</p>
+        
+        <!-- Pautan WhatsApp Admin dengan Teks Pre-filled -->
+        <a href="https://wa.me/60135792215?text=Salam%20Admin%2C%20saya%20ada%20pertanyaan%20mengenai%20Pendaftaran%20PPD%20Club." target="_blank" class="whatsapp-link">
+            📞 Ada Pertanyaan? Hubungi Admin
+        </a>
+    </div>
+
+    <!-- TABS NAVIGASI -->
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="switchTab('daftar')">DAFTAR BARU</div>
+        <div class="nav-tab" onclick="switchTab('semak')">SEMAKAN KEAHLIAN</div>
+    </div>
+
+    <!-- 1. BAHAGIAN PENDAFTARAN -->
+    <div id="registerSection">
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="ic_number">NO. KAD PENGENALAN (Tanpa Sengkang)</label>
+                <input type="text" name="ic" id="ic_number" maxlength="12" placeholder="Contoh: 850101135050" required>
+            </div>
+
+            <div id="personal-details" style="display: none;">
+                <!-- Auto Fields -->
+                <div style="display: flex; gap: 15px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>TARIKH LAHIR</label>
+                        <input type="text" name="dob" id="dob" class="readonly-field" readonly style="background: #e9ecef; cursor: not-allowed;">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>JANTINA</label>
+                        <input type="text" name="jantina" id="gender" class="readonly-field" readonly style="background: #e9ecef; cursor: not-allowed;">
+                    </div>
+                </div>
+
+                <!-- User Entry Fields -->
+                <div class="form-group">
+                    <label for="fullname">NAMA PENUH</label>
+                    <input type="text" name="nama" id="fullname" placeholder="MASUKKAN NAMA PENUH SEPERTI DALAM IC" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="status_kahwin">STATUS PERKAHWINAN</label>
+                    <select id="status_kahwin" name="status_kahwin" required>
+                        <option value="">- SILA PILIH -</option>
+                        <option value="BUJANG">BUJANG</option>
+                        <option value="BERKAHWIN">BERKAHWIN</option>
+                        <option value="DUDA">DUDA</option>
+                        <option value="JANDA">JANDA</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="sector">SEKTOR</label>
+                    <select id="sector" name="sektor" required>
+                        <option value="">- PILIH SEKTOR -</option>
+                        <option value="SEKTOR PERANCANGAN">SEKTOR PERANCANGAN</option>
+                        <option value="SEKTOR PEMBELAJARAN">SEKTOR PEMBELAJARAN</option>
+                        <option value="SEKTOR PENGURUSAN SEKOLAH">SEKTOR PENGURUSAN SEKOLAH</option>
+                        <option value="SEKTOR PEMBANGUNAN MURID">SEKTOR PEMBANGUNAN MURID</option>
+                        <option value="SEKTOR PENTAKSIRAN & PEPERIKSAAN">SEKTOR PENTAKSIRAN & PEPERIKSAAN</option>
+                        <option value="SEKTOR PSIKOLOGI & KAUNSELING">SEKTOR PSIKOLOGI & KAUNSELING</option>
+                        <option value="SEKTOR PENGURUSAN">SEKTOR PENGURUSAN</option>
+                        <option value="LAIN-LAIN">LAIN-LAIN</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="unit">UNIT / SUB-UNIT (Jika Ada)</label>
+                    <input type="text" name="unit" id="unit" placeholder="Contoh: Unit Kewangan / Unit ICT" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="jawatan_select">JAWATAN</label>
+                    <select id="jawatan_select" name="jawatan_select" onchange="toggleCustomJawatan(this)" required>
+                        <option value="">- PILIH JAWATAN -</option>
+                        <option value="PEGAWAI PENDIDIKAN DAERAH">PEGAWAI PENDIDIKAN DAERAH</option>
+                        <option value="TIMBALAN PPD (PERANCANGAN)">TIMBALAN PPD (PERANCANGAN)</option>
+                        <option value="TIMBALAN PPD (PEMBELAJARAN)">TIMBALAN PPD (PEMBELAJARAN)</option>
+                        <option value="TIMBALAN PPD (PENGURUSAN SEKOLAH)">TIMBALAN PPD (PENGURUSAN SEKOLAH)</option>
+                        <option value="TIMBALAN PPD (PEMBANGUNAN MURID)">TIMBALAN PPD (PEMBANGUNAN MURID)</option>
+                        <option value="PENOLONG PEGAWAI PPD">PENOLONG PEGAWAI PPD</option>
+                        <option value="KAUNSELOR PENDIDIKAN DAERAH">KAUNSELOR PENDIDIKAN DAERAH</option>
+                        <option value="SISC+">SISC+</option>
+                        <option value="SIPARTNER+">SIPARTNER+</option>
+                        <option value="PEGAWAI EKSEKUTIF">PEGAWAI EKSEKUTIF</option>
+                        <option value="PENOLONG PEGAWAI TADBIR">PENOLONG PEGAWAI TADBIR</option>
+                        <option value="PENOLONG PEGAWAI TEKNOLOGI MAKLUMAT">PENOLONG PEGAWAI TEKNOLOGI MAKLUMAT</option>
+                        <option value="PENOLONG JURUTERA">PENOLONG JURUTERA</option>
+                        <option value="PENOLONG AKAUNTAN">PENOLONG AKAUNTAN</option>
+                        <option value="PEMBANTU TADBIR (P/O)">PEMBANTU TADBIR (P/O)</option>
+                        <option value="PEMBANTU TADBIR (KEWANGAN)">PEMBANTU TADBIR (KEWANGAN)</option>
+                        <option value="PENYELIA ASRAMA">PENYELIA ASRAMA</option>
+                        <option value="PEMBANTU PENGURUSAN MURID">PEMBANTU PENGURUSAN MURID</option>
+                        <option value="JURUTEKNIK KOMPUTER">JURUTEKNIK KOMPUTER</option>
+                        <option value="PEMBANTU OPERASI">PEMBANTU OPERASI</option>
+                        <option value="PEMANDU KENDERAAN">PEMANDU KENDERAAN</option>
+                        <option value="LAIN-LAIN">LAIN-LAIN (SILA NYATAKAN)</option>
+                    </select>
+                    <!-- Input tambahan jika memilih Lain-lain -->
+                    <input type="text" id="jawatan_custom" name="jawatan_custom" placeholder="MASUKKAN NAMA JAWATAN ANDA DI SINI" style="display: none; margin-top: 10px; border-color: var(--accent-color);">
+                </div>
+
+                <div class="form-group">
+                    <label for="start_date">TARIKH LAPOR DIRI DI PPD MIRI</label>
+                    <input type="date" name="tarikh_mula" id="start_date" required>
+                    
+                    <!-- Tempat papar tempoh khidmat (Perkhidmatan Sebenar) -->
+                    <div id="service_duration" class="duration-box" style="background-color: #e3f2fd; border-radius:10px; padding:15px; margin-top:10px; border: 1px solid #90caf9; color: #0d47a1; display:none;">
+                        TEMPOH PERKHIDMATAN: <span id="duration_text" style="font-weight:700">-</span>
+                    </div>
+                    <input type="hidden" name="tempoh_khidmat" id="hidden_duration">
+
+                    <!-- Tempat papar tempoh keahlian (Kiraan Kelab bermula 2024) -->
+                    <div id="club_duration_box" class="duration-box" style="background-color: #e8f5e9; border-radius:10px; padding:15px; margin-top:10px; border: 1px solid #a5d6a7; color: #1b5e20; display: none;">
+                        TEMPOH KEAHLIAN PPD CLUB: <span id="club_duration_text" style="font-weight: 800; font-size: 1.1em;">-</span>
+                        <br><small style="font-weight: normal; font-size: 0.85em;">(Kiraan bermula dari Tahun 2024)</small>
+                    </div>
+                    <input type="hidden" name="tempoh_keahlian" id="hidden_club_duration">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">NO. TELEFON</label>
+                    <input type="text" name="phone" id="phone" placeholder="01X-XXXXXXX" required>
+                </div>
+
+                <!-- Maklumat Yuran & Faedah -->
+                <div class="fee-notice">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <strong style="font-size: 1.2em; color: #856404; letter-spacing:1px;">⭐ MAKLUMAN PENTING</strong>
+                    </div>
+                    
+                    <p style="margin-bottom: 15px; border-bottom: 1px dashed #d3b95f; padding-bottom: 15px;">
+                        Yuran keahlian PPD CLUB adalah sebanyak <strong style="font-size:1.1em">RM60.00 SETAHUN</strong>. 
+                        <br><br>
+                        <span style="font-size: 0.85em; font-style: italic; opacity:0.8;">
+                            *Hasil Mesyuarat Jawatankuasa Induk PPD Club Bilangan 1 Tahun 2024 pada 29 November 2024.
+                        </span>
+                    </p>
+                    
+                    <strong style="display:block; margin-bottom:10px; color:#003399;">📋 FAEDAH KEAHLIAN:</strong>
+                    
+                    <div style="font-size: 0.95em; line-height: 1.6;">
+                        
+                        <!-- Hadiah -->
+                        <div style="margin-bottom: 15px;">
+                            <strong style="color:var(--accent-color)">🎁 HADIAH</strong>
+                            <ul style="margin: 5px 0 0 20px; padding: 0; list-style-type: '👉 ';">
+                                <li>Berkahwin: <strong>RM30</strong></li>
+                                <li>Hari Jadi: <strong>RM20</strong></li>
+                            </ul>
+                        </div>
+
+                        <!-- Kelahiran -->
+                        <div style="margin-bottom: 15px;">
+                            <strong style="color:var(--accent-color)">👶 KELAHIRAN ANAK</strong> <span style="font-size:0.85em; color:#666;">(Ikut Tempoh)</span>
+                            <ul style="margin: 5px 0 0 20px; padding: 0; list-style-type: '👉 ';">
+                                <li>&lt; 3 tahun: <strong>RM30</strong></li>
+                                <li>&lt; 5 tahun: <strong>RM50</strong></li>
+                                <li>5 tahun ke atas: <strong>RM70</strong></li>
+                            </ul>
+                        </div>
+
+                        <!-- Bersara/Berpindah -->
+                        <div style="margin-bottom: 15px;">
+                            <strong style="color:var(--accent-color)">🏠 BERSARA / BERPINDAH</strong>
+                            <ul style="margin: 5px 0 0 20px; padding: 0; list-style-type: '👉 ';">
+                                <li>Kurang 1 tahun: <strong>RM100</strong></li>
+                                <li>Kurang 3 tahun: <strong>RM200</strong></li>
+                                <li>Kurang 5 tahun: <strong>RM300</strong></li>
+                                <li>Lebih 5 tahun: <strong>RM400</strong></li>
+                            </ul>
+                        </div>
+
+                        <!-- Kematian -->
+                        <div>
+                            <strong style="color:var(--accent-color)">💰 SUMBANGAN KEMATIAN</strong>
+                            <ul style="margin: 5px 0 0 20px; padding: 0; list-style-type: '👉 ';">
+                                <li>Kurang 1 tahun: <strong>RM200</strong></li>
+                                <li>Kurang 3 tahun: <strong>RM500</strong></li>
+                                <li>Kurang 5 tahun: <strong>RM800</strong></li>
+                                <li>Lebih 5 tahun: <strong>RM1000</strong></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Checkbox Pengesahan -->
+                <div class="checkbox-group">
+                    <input type="checkbox" id="agreement_check" name="agreement_check" required>
+                    <label for="agreement_check">
+                        Dengan mendaftar ini, saya bersetuju, akan komited dan membantu dalam meningkatkan matlamat PPD CLUB. 
+                        Saya juga mengambil maklum bahawa PPD CLUB berhak menolak permohonan atau melucutkan keahlian sekiranya difikirkan ada asas dan sebab yang wajar.
+                    </label>
+                </div>
+
+                <button type="button" class="btn-submit" onclick="validateAndPreview()">DAFTAR KEAHLIAN SEKARANG</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 2. BAHAGIAN SEMAKAN -->
+    <div id="checkSection" style="display: none;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="font-size: 3em; margin-bottom: 10px;">🔍</div>
+            <h3 style="margin:0; color:#444;">SEMAKAN STATUS</h3>
+            <p style="color: #888;">Masukkan No. Kad Pengenalan anda untuk menyemak.</p>
+        </div>
+        
+        <div class="form-group">
+            <label for="check_ic" style="text-align: center;">NO. KAD PENGENALAN</label>
+            <input type="text" id="check_ic" maxlength="12" placeholder="Contoh: 850101135050" style="font-size: 1.3em; letter-spacing: 2px; text-align: center; font-weight:bold; padding: 20px;">
+        </div>
+
+        <button type="button" class="btn-submit" onclick="checkMembership()" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">SEMAK STATUS</button>
+        
+        <div id="checkLoader" class="loader" style="margin-top: 30px;"></div>
+    </div>
+
+</div>
+
+<!-- Modal Pengesahan / Paparan Kad -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle" style="color: var(--primary-color); margin-bottom:5px; font-weight:800;">SAHKAN MAKLUMAT</h3>
+        <p id="modalSubtitle" style="font-size:0.9em; color:#666; margin-bottom:20px;">Semak kad keahlian digital anda:</p>
+        
+        <!-- Member Card Preview -->
+        <div class="member-card">
+            
+            <!-- Overlay untuk status PENDING -->
+            <div id="cardOverlay" class="pending-overlay">
+                <div class="pending-stamp">MENUNGGU<br>PENGESAHAN</div>
+            </div>
+
+            <div class="card-header">
+                <!-- Logo ditambah ke dalam Kad Keahlian -->
+                <div class="card-brand">
+                    <img src="https://i.imgur.com/PVu4T7c.png" alt="Logo" class="card-logo-img">
+                    <div class="card-logo">PPD CLUB MIRI</div>
+                </div>
+                <div class="card-subtitle">PREMIUM MEMBER</div>
+            </div>
+            <div class="card-body">
+                <div class="card-field">
+                    <div class="card-label">NAMA / NAME</div>
+                    <div class="card-value" id="cardName">ALI BIN ABU</div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between;">
+                    <div class="card-field">
+                        <div class="card-label">NO. K/P / ID</div>
+                        <div class="card-value" id="cardIC">850101-13-5050</div>
+                    </div>
+                    <div class="card-field" style="text-align: right;">
+                        <div class="card-label">TEMPOH CLUB</div>
+                        <div class="card-value" id="cardDuration">1 TAHUN</div>
+                    </div>
+                </div>
+
+                <div class="card-field">
+                    <div class="card-label">JAWATAN / POSITION</div>
+                    <div class="card-value" id="cardJawatan" style="font-size:0.85em; white-space: normal; line-height:1.2;">PEGAWAI PENDIDIKAN</div>
+                </div>
+            </div>
+
+            <div class="barcode-container">
+                <div class="barcode" id="cardBarcode">*850101135050*</div>
+                <div style="font-size:0.6em; margin-top:5px; letter-spacing:2px; font-weight:bold; color:#555;">ID SEMENTARA</div>
             </div>
         </div>
-        <div style="font-size:0.9em; text-align:right;">
-            Status: <span id="connectionStatus" style="color:orange; font-weight:bold;">Menyambung...</span>
-        </div>
-    </div>
 
-    <!-- Statistik -->
-    <div class="stats-container">
-        <div class="stat-card">
-            <div class="stat-number" id="totalCount">0</div>
-            <div class="stat-label">Jumlah Permohonan</div>
-        </div>
-        <div class="stat-card" style="border-color: var(--warning-color);">
-            <div class="stat-number" id="pendingCount" style="color: var(--warning-color);">0</div>
-            <div class="stat-label">Belum Disahkan</div>
-        </div>
-        <div class="stat-card" style="border-color: var(--success-color);">
-            <div class="stat-number" id="approvedCount" style="color: var(--success-color);">0</div>
-            <div class="stat-label">Disahkan</div>
-        </div>
-    </div>
+        <!-- Footer Modal Berubah Ikut Konteks (Daftar atau Semak) -->
+        <div id="registerFooter">
+            <div style="margin-top: 15px; font-size: 1.1em; background:#f8f9fa; padding:10px; border-radius:10px;">
+                YURAN TAHUNAN: <span style="color:var(--accent-color); font-weight:900;">RM60.00</span>
+            </div>
+            
+            <div id="loading" class="loader" style="margin-top:15px"></div>
+            <div id="statusMessage" style="color: green; font-weight: bold; margin-top: 10px;"></div>
 
-    <!-- Kawalan -->
-    <div class="controls">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Cari Nama atau IC..." onkeyup="searchTable()">
-        </div>
-        <div class="action-buttons">
-            <button class="btn-refresh" onclick="loadData()"><i class="fas fa-sync-alt"></i> Refresh</button>
-            <button class="btn-approve-all" id="btnBulkApprove" onclick="bulkApprove()" disabled>
-                <i class="fas fa-check-double"></i> Sahkan Pilihan (<span id="selectedCount">0</span>)
-            </button>
-        </div>
-    </div>
-
-    <!-- Jadual -->
-    <div class="table-responsive">
-        <div id="loader" class="loader-container">
-            <div class="loader"></div>
-            <p style="margin-top:15px; color:#666;">Memuatkan data...</p>
+            <div class="modal-buttons" id="modalBtns">
+                <button class="btn-cancel" onclick="closeModal()">KEMBALI</button>
+                <button class="btn-confirm" onclick="finalSubmit()">SAHKAN & HANTAR</button>
+            </div>
         </div>
 
-        <table id="dataTable">
-            <thead>
-                <tr>
-                    <th style="width: 40px; text-align: center;">
-                        <input type="checkbox" id="selectAll" class="custom-checkbox" onchange="toggleSelectAll()">
-                    </th>
-                    <th>Nama Ahli</th>
-                    <th>No. IC</th>
-                    <th>Jawatan & Sektor</th>
-                    <th>Tempoh</th>
-                    <th>Status</th>
-                    <th style="text-align: center;">Tindakan</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <!-- Data akan dimasukkan di sini -->
-            </tbody>
-        </table>
+        <div id="checkFooter" style="display: none;">
+             <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeModal()">TUTUP</button>
+                <button class="btn-confirm" id="btnPrintCard" onclick="window.print()" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">CETAK KAD</button>
+            </div>
+        </div>
+
     </div>
 </div>
 
 <script type="module">
     // Firebase Imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // --- FIREBASE CONFIGURATION (Sama seperti user) ---
+    // Global variable references
+    const icInput = document.getElementById('ic_number');
+    const detailsDiv = document.getElementById('personal-details');
+    const startDateInput = document.getElementById('start_date');
+    const durationBox = document.getElementById('service_duration');
+    const durationText = document.getElementById('duration_text');
+    const hiddenDuration = document.getElementById('hidden_duration');
+    const clubDurationBox = document.getElementById('club_duration_box');
+    const clubDurationText = document.getElementById('club_duration_text');
+    const hiddenClubDuration = document.getElementById('hidden_club_duration');
+    
+    // --- FIREBASE SETUP ---
     const firebaseConfig = {
       apiKey: "AIzaSyAZC1WyqVSlicy4jRIZyIFmx2rjlrbtfus",
       authDomain: "ppdclub-e9f2a.firebaseapp.com",
@@ -330,284 +834,283 @@
       appId: "1:72228598666:web:1855035320bee1066c0e73"
     };
 
-    // Initialize Firebase
-    let db;
+    let app, auth, db;
     let currentUser = null;
-    let allData = []; // Simpan data tempatan untuk carian pantas
 
     try {
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
         db = getFirestore(app);
 
-        // Auto login anonymous untuk admin (Basic)
-        signInAnonymously(auth).catch((error) => {
-            console.error("Auth Error:", error);
-            document.getElementById('connectionStatus').innerText = "Ralat Auth";
-            document.getElementById('connectionStatus').style.color = "red";
-        });
+        const initAuth = async () => {
+            try {
+                await signInAnonymously(auth);
+            } catch (error) {
+                console.error("Auth Error:", error);
+                document.getElementById('statusMessage').innerText = "Ralat Sambungan Database. Sila semak console.";
+            }
+        };
+        initAuth();
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                document.getElementById('connectionStatus').innerText = "Online";
-                document.getElementById('connectionStatus').style.color = "green";
-                loadData(); // Muat turun data bila dah login
+                console.log("System Ready. User ID:", user.uid);
             }
         });
-
     } catch (e) {
-        console.error("Firebase Init Error:", e);
-        alert("Ralat Konfigurasi Firebase.");
+        console.error("Error initializing Firebase:", e);
     }
 
-    // --- FUNGSI UTAMA ---
+    // --- FORM LOGIC ---
+    document.querySelectorAll('input[type="text"]').forEach(input => {
+        input.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    });
 
-    // 1. Muat Turun Data (Load Data)
-    window.loadData = async function() {
-        if (!db) return;
-        
-        const loader = document.getElementById('loader');
-        const tbody = document.getElementById('tableBody');
-        const table = document.getElementById('dataTable');
-        
-        loader.style.display = 'block';
-        table.style.opacity = '0.5';
-        tbody.innerHTML = ''; // Kosongkan jadual
+    icInput.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, ''); 
+        const ic = this.value;
 
-        try {
-            const querySnapshot = await getDocs(collection(db, 'ppd_registrations'));
-            
-            allData = [];
-            let total = 0;
-            let pending = 0;
-            let approved = 0;
-
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                data.id = doc.id; // Simpan ID dokumen untuk update/delete
-                allData.push(data);
-
-                // Kira statistik
-                if (data.status === 'DISAHKAN') {
-                    approved++;
-                } else {
-                    pending++;
-                }
-                total++;
-            });
-
-            // Update Statistik UI
-            document.getElementById('totalCount').innerText = total;
-            document.getElementById('pendingCount').innerText = pending;
-            document.getElementById('approvedCount').innerText = approved;
-
-            renderTable(allData);
-
-        } catch (error) {
-            console.error("Error loading data:", error);
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Gagal memuatkan data. Sila semak sambungan internet.</td></tr>`;
-        } finally {
-            loader.style.display = 'none';
-            table.style.opacity = '1';
+        if (ic.length === 12) {
+            extractICData(ic);
+            detailsDiv.style.display = 'block';
+        } else {
+            detailsDiv.style.display = 'none';
         }
-    }
+    });
 
-    // 2. Render Jadual
-    function renderTable(dataArray) {
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '';
+    startDateInput.addEventListener('change', function() {
+        const start = new Date(this.value);
+        const now = new Date();
 
-        if (dataArray.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px;">Tiada rekod ditemui.</td></tr>`;
+        if (start > now) {
+            alert("Tarikh lapor diri tidak boleh melebihi tarikh hari ini.");
+            this.value = "";
+            durationBox.style.display = 'none';
+            clubDurationBox.style.display = 'none';
             return;
         }
 
-        // Susun: Pending di atas, Approved di bawah (Sort)
-        dataArray.sort((a, b) => {
-            const statusA = a.status || '';
-            const statusB = b.status || '';
-            if (statusA === statusB) return 0;
-            return statusA === 'DISAHKAN' ? 1 : -1;
-        });
+        const diff = calculateDuration(start, now);
+        const resultString = `${diff.years} TAHUN, ${diff.months} BULAN`;
+        durationText.innerText = resultString;
+        hiddenDuration.value = resultString;
+        durationBox.style.display = 'block';
 
-        dataArray.forEach((item) => {
-            const isApproved = item.status === 'DISAHKAN';
-            const statusBadge = isApproved 
-                ? `<span class="badge badge-approved">DISAHKAN</span>` 
-                : `<span class="badge badge-new">BARU</span>`;
-            
-            const approveBtn = isApproved 
-                ? `<button class="btn-icon" style="background:#ccc; cursor:default;" title="Sudah Disahkan"><i class="fas fa-check"></i></button>`
-                : `<button class="btn-icon btn-check" onclick="verifySingle('${item.id}')" title="Sahkan Permohonan"><i class="fas fa-check"></i></button>`;
+        const startYear = start.getFullYear();
+        const currentYear = now.getFullYear();
+        const effectiveYear = startYear < 2024 ? 2024 : startYear;
+        let clubYears = (currentYear - effectiveYear) + 1;
+        if (clubYears < 1) clubYears = 1;
 
-            const row = `
-                <tr id="row-${item.id}">
-                    <td style="text-align: center;">
-                        <input type="checkbox" class="select-row custom-checkbox" value="${item.id}" onchange="updateBulkButton()">
-                    </td>
-                    <td>
-                        <strong>${item.nama || '-'}</strong><br>
-                        <small style="color:#888;">${item.phone || '-'}</small>
-                    </td>
-                    <td>${item.ic || '-'}</td>
-                    <td>
-                        ${item.jawatan || '-'}<br>
-                        <small style="color:#666;">${item.sektor || '-'}</small>
-                    </td>
-                    <td>${item.tempoh_keahlian_club || '-'}</td>
-                    <td>${statusBadge}</td>
-                    <td style="text-align: center;">
-                        <div style="display:flex; justify-content:center; gap:5px;">
-                            ${approveBtn}
-                            <button class="btn-icon btn-delete" onclick="deleteSingle('${item.id}', '${item.nama}')" title="Hapus"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-            tbody.innerHTML += row;
-        });
+        const clubString = `${clubYears} TAHUN`;
+        clubDurationText.innerText = clubString;
+        hiddenClubDuration.value = clubString;
+        clubDurationBox.style.display = 'block';
+    });
+
+    function calculateDuration(startDate, endDate) {
+        let years = endDate.getFullYear() - startDate.getFullYear();
+        let months = endDate.getMonth() - startDate.getMonth();
+        let days = endDate.getDate() - startDate.getDate();
+        if (days < 0) { months--; const prevMonth = new Date(endDate.getFullYear(), endDate.getMonth(), 0); days += prevMonth.getDate(); }
+        if (months < 0) { years--; months += 12; }
+        return { years, months, days };
+    }
+
+    function extractICData(ic) {
+        const lastDigit = parseInt(ic.substr(11, 1));
+        const gender = (lastDigit % 2 !== 0) ? "LELAKI" : "PEREMPUAN";
+        document.getElementById('gender').value = gender;
+        let year = ic.substr(0, 2);
+        const month = ic.substr(2, 2);
+        const day = ic.substr(4, 2);
+        const currentYearPrefix = new Date().getFullYear().toString().substr(2,2);
+        const fullYear = (parseInt(year) > parseInt(currentYearPrefix)) ? "19" + year : "20" + year;
+        document.getElementById('dob').value = `${day}/${month}/${fullYear}`;
+    }
+
+    window.toggleCustomJawatan = function(selectElement) {
+        const customInput = document.getElementById('jawatan_custom');
+        if (selectElement.value === 'LAIN-LAIN') {
+            customInput.style.display = 'block';
+            customInput.required = true;
+            customInput.focus();
+        } else {
+            customInput.style.display = 'none';
+            customInput.required = false;
+            customInput.value = ''; 
+        }
+    }
+
+    window.switchTab = function(tabName) {
+        const tabs = document.querySelectorAll('.nav-tab');
+        const regSection = document.getElementById('registerSection');
+        const checkSection = document.getElementById('checkSection');
+        tabs.forEach(t => t.classList.remove('active'));
+
+        if (tabName === 'daftar') {
+            tabs[0].classList.add('active');
+            regSection.style.display = 'block';
+            checkSection.style.display = 'none';
+        } else {
+            tabs[1].classList.add('active');
+            regSection.style.display = 'none';
+            checkSection.style.display = 'block';
+        }
+    }
+
+    // --- CHECK MEMBERSHIP LOGIC ---
+    window.checkMembership = async function() {
+        const checkIC = document.getElementById('check_ic').value.replace(/[^0-9]/g, '');
+        const loader = document.getElementById('checkLoader');
+        if (checkIC.length < 12) { alert("Sila masukkan No. Kad Pengenalan yang lengkap."); return; }
+        loader.style.display = 'block';
+        if (!db) { alert("Sistem Pangkalan Data tidak dapat dihubungi."); loader.style.display = 'none'; return; }
         
-        // Reset checkbox header
-        document.getElementById('selectAll').checked = false;
-        updateBulkButton();
-    }
-
-    // 3. Fungsi Carian (Client-side)
-    window.searchTable = function() {
-        const input = document.getElementById('searchInput').value.toUpperCase();
-        const filtered = allData.filter(item => {
-            const name = (item.nama || '').toUpperCase();
-            const ic = (item.ic || '').toUpperCase();
-            return name.includes(input) || ic.includes(input);
-        });
-        renderTable(filtered);
-    }
-
-    // 4. Sahkan Individu
-    window.verifySingle = async function(docId) {
-        if (!confirm("Adakah anda pasti ingin mengesahkan keahlian ini?")) return;
-
         try {
-            const userRef = doc(db, 'ppd_registrations', docId);
-            await updateDoc(userRef, {
-                status: "DISAHKAN",
-                verifiedAt: new Date().toISOString()
+            const querySnapshot = await getDocs(collection(db, 'ppd_registrations'));
+            let foundData = null;
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                if (data.ic === checkIC) foundData = data;
             });
+            loader.style.display = 'none';
             
-            // Kemaskini data tempatan tanpa refresh penuh
-            const itemIndex = allData.findIndex(x => x.id === docId);
-            if (itemIndex > -1) allData[itemIndex].status = "DISAHKAN";
-            
-            alert("Permohonan berjaya disahkan!");
-            renderTable(allData); // Re-render untuk ubah status
-            
-            // Update stats
-            updateStats();
+            if (foundData) {
+                // Common Card Data
+                document.getElementById('cardName').innerText = foundData.nama;
+                document.getElementById('cardIC').innerText = foundData.ic;
+                document.getElementById('cardJawatan').innerText = foundData.jawatan;
+                document.getElementById('cardDuration').innerText = foundData.tempoh_keahlian_club || "1 TAHUN";
+                document.getElementById('cardBarcode').innerText = "*" + foundData.ic + "*";
 
-        } catch (error) {
-            console.error("Error verifying:", error);
-            alert("Gagal mengesahkan. Sila cuba lagi.");
-        }
-    }
+                const overlay = document.getElementById('cardOverlay');
+                const printBtn = document.getElementById('btnPrintCard');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalSubtitle = document.getElementById('modalSubtitle');
 
-    // 5. Hapus Individu
-    window.deleteSingle = async function(docId, name) {
-        if (!confirm(`AMARAN: Adakah anda pasti ingin memadam rekod ${name}?\nTindakan ini tidak boleh dikembalikan.`)) return;
-
-        try {
-            await deleteDoc(doc(db, 'ppd_registrations', docId));
-            
-            // Buang dari array tempatan
-            allData = allData.filter(x => x.id !== docId);
-            
-            renderTable(allData);
-            updateStats();
-            alert("Rekod berjaya dipadam.");
-
-        } catch (error) {
-            console.error("Error deleting:", error);
-            alert("Gagal memadam rekod.");
-        }
-    }
-
-    // 6. Logik Checkbox & Bulk Action
-    window.toggleSelectAll = function() {
-        const masterCheck = document.getElementById('selectAll');
-        const rows = document.querySelectorAll('.select-row');
-        rows.forEach(cb => cb.checked = masterCheck.checked);
-        updateBulkButton();
-    }
-
-    window.updateBulkButton = function() {
-        const checkedBoxes = document.querySelectorAll('.select-row:checked');
-        const btn = document.getElementById('btnBulkApprove');
-        const countSpan = document.getElementById('selectedCount');
-        
-        countSpan.innerText = checkedBoxes.length;
-        btn.disabled = checkedBoxes.length === 0;
-    }
-
-    // 7. Sahkan Secara Pukal (Bulk Verify)
-    window.bulkApprove = async function() {
-        const checkedBoxes = document.querySelectorAll('.select-row:checked');
-        if (checkedBoxes.length === 0) return;
-
-        if (!confirm(`Sahkan ${checkedBoxes.length} permohonan terpilih?`)) return;
-
-        const btn = document.getElementById('btnBulkApprove');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Memproses...`;
-        btn.disabled = true;
-
-        let successCount = 0;
-
-        try {
-            // Proses satu per satu (boleh guna Promise.all untuk lebih pantas, tapi ini lebih selamat untuk elak rate limit)
-            for (const cb of checkedBoxes) {
-                const docId = cb.value;
-                const userRef = doc(db, 'ppd_registrations', docId);
-                
-                // Semak jika belum disahkan
-                const item = allData.find(x => x.id === docId);
-                if (item && item.status !== 'DISAHKAN') {
-                    await updateDoc(userRef, {
-                        status: "DISAHKAN",
-                        verifiedAt: new Date().toISOString()
-                    });
-                    item.status = "DISAHKAN"; // Update local
-                    successCount++;
+                // LOGIK STATUS
+                if (foundData.status === 'DISAHKAN') {
+                    // Jika Sah
+                    modalTitle.innerText = "STATUS: AKTIF";
+                    modalTitle.style.color = "var(--success-color)";
+                    modalSubtitle.innerText = "Keahlian anda adalah SAH.";
+                    overlay.style.display = 'none'; // Sembunyi cop pending
+                    printBtn.style.display = 'inline-block'; // Tunjuk butang cetak
+                } else {
+                    // Jika Pending
+                    modalTitle.innerText = "MENUNGGU PENGESAHAN";
+                    modalTitle.style.color = "var(--warning-color)";
+                    modalSubtitle.innerText = "Permohonan anda sedang disemak oleh Admin.";
+                    overlay.style.display = 'flex'; // Tunjuk cop pending
+                    printBtn.style.display = 'none'; // Sorok butang cetak
                 }
+
+                document.getElementById('registerFooter').style.display = 'none';
+                document.getElementById('checkFooter').style.display = 'block';
+                document.getElementById('confirmModal').style.display = 'block';
+            } else {
+                alert("Tiada rekod ditemui. Sila daftar dahulu.");
             }
-
-            alert(`Proses selesai! ${successCount} permohonan telah disahkan.`);
-            renderTable(allData);
-            updateStats();
-
         } catch (error) {
-            console.error("Bulk error:", error);
-            alert("Berlaku ralat semasa proses pukal.");
-        } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-            document.getElementById('selectAll').checked = false;
-            updateBulkButton();
+            console.error(error);
+            alert("Ralat sistem.");
+            loader.style.display = 'none';
         }
     }
 
-    // Fungsi Helper untuk update stats tanpa fetch semula database
-    function updateStats() {
-        let pending = 0;
-        let approved = 0;
-        allData.forEach(item => {
-            if (item.status === 'DISAHKAN') approved++;
-            else pending++;
-        });
-        document.getElementById('totalCount').innerText = allData.length;
-        document.getElementById('pendingCount').innerText = pending;
-        document.getElementById('approvedCount').innerText = approved;
+    // --- REGISTRATION PREVIEW LOGIC ---
+    window.validateAndPreview = function() {
+        const fullname = document.getElementById('fullname').value;
+        const sector = document.getElementById('sector').value;
+        const status = document.getElementById('status_kahwin').value;
+        const startDate = document.getElementById('start_date').value;
+        const phone = document.getElementById('phone').value;
+        const agreement = document.getElementById('agreement_check');
+        const ic = document.getElementById('ic_number').value;
+        const clubDuration = document.getElementById('hidden_club_duration').value;
+        let jawatan = document.getElementById('jawatan_select').value;
+        if (jawatan === 'LAIN-LAIN') jawatan = document.getElementById('jawatan_custom').value;
+
+        if(!fullname || !sector || !status || !startDate || !phone || !jawatan) { alert("SILA LENGKAPKAN SEMUA MAKLUMAT BERTANDA."); return; }
+        if (!agreement.checked) { alert("SILA TANDAKAN KOTAK PERSETUJUAN."); return; }
+
+        document.getElementById('modalTitle').innerText = "SAHKAN MAKLUMAT";
+        document.getElementById('modalTitle').style.color = "var(--primary-color)";
+        document.getElementById('modalSubtitle').innerText = "Sila semak paparan sebelum menghantar:";
+        
+        document.getElementById('cardName').innerText = fullname;
+        document.getElementById('cardIC').innerText = ic;
+        document.getElementById('cardJawatan').innerText = jawatan;
+        document.getElementById('cardDuration').innerText = clubDuration || "BARU MENDAFTAR";
+        document.getElementById('cardBarcode').innerText = "*" + ic + "*";
+        
+        // Hide Pending Overlay during registration preview
+        document.getElementById('cardOverlay').style.display = 'none'; 
+
+        document.getElementById('registerFooter').style.display = 'block';
+        document.getElementById('checkFooter').style.display = 'none';
+        document.getElementById('confirmModal').style.display = 'block';
     }
 
+    window.closeModal = function() { document.getElementById('confirmModal').style.display = 'none'; }
+
+    // --- FINAL SUBMIT LOGIC ---
+    window.finalSubmit = async function() {
+        if (!db) { alert("Sistem Pangkalan Data tidak dapat dihubungi."); return; }
+        if (!currentUser) { alert("Sistem sedang bersambung... Sila tunggu."); return; }
+        const modalBtns = document.getElementById('modalBtns');
+        const loading = document.getElementById('loading');
+        modalBtns.style.display = 'none';
+        loading.style.display = 'block';
+
+        let jawatanAkhir = document.getElementById('jawatan_select').value;
+        if (jawatanAkhir === 'LAIN-LAIN') jawatanAkhir = document.getElementById('jawatan_custom').value;
+
+        const registrationData = {
+            ic: document.getElementById('ic_number').value,
+            nama: document.getElementById('fullname').value,
+            jantina: document.getElementById('gender').value,
+            dob: document.getElementById('dob').value,
+            status_kahwin: document.getElementById('status_kahwin').value,
+            sektor: document.getElementById('sector').value,
+            unit: document.getElementById('unit').value,
+            jawatan: jawatanAkhir,
+            tarikh_mula: document.getElementById('start_date').value,
+            tempoh_khidmat: document.getElementById('hidden_duration').value,
+            tempoh_keahlian_club: document.getElementById('hidden_club_duration').value,
+            phone: document.getElementById('phone').value,
+            status: "PENDING", // Status asal adalah PENDING
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            await addDoc(collection(db, 'ppd_registrations'), registrationData);
+            loading.style.display = 'none';
+            document.getElementById('statusMessage').innerText = "BERJAYA!";
+            setTimeout(() => {
+                alert("PENDAFTARAN DITERIMA!\nStatus kini: MENUNGGU PENGESAHAN.");
+                window.closeModal();
+                document.getElementById('registrationForm').reset();
+                detailsDiv.style.display = 'none';
+                modalBtns.style.display = 'flex';
+                document.getElementById('statusMessage').innerText = "";
+            }, 500);
+        } catch (error) {
+            console.error('Error:', error);
+            alert("Ralat sistem!");
+            loading.style.display = 'none';
+            modalBtns.style.display = 'flex';
+        }
+    }
+    
+    window.onclick = function(event) {
+        const modal = document.getElementById('confirmModal');
+        if (event.target == modal) modal.style.display = "none";
+    }
 </script>
 
 </body>
