@@ -44,7 +44,7 @@
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 550px;
+            max-width: 600px; /* Lebarkan sedikit untuk muat table */
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.5);
             animation: slideUp 0.6s ease-out;
@@ -240,7 +240,7 @@
             margin: 0;
         }
 
-        /* Fee Notice */
+        /* Fee Notice & Table Styling */
         .fee-notice {
             background: linear-gradient(to right, #fff3cd, #fff8e1);
             color: #856404;
@@ -252,13 +252,37 @@
             box-shadow: 0 5px 15px rgba(255, 193, 7, 0.1);
         }
 
-        .fee-notice ul {
-            margin: 10px 0 0 20px;
-            padding: 0;
+        .benefits-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9em;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 8px;
+            overflow: hidden;
         }
 
-        .fee-notice li {
-            margin-bottom: 5px;
+        .benefits-table th, .benefits-table td {
+            border: 1px solid #d3b95f;
+            padding: 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .benefits-table th {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: #856404;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85em;
+        }
+
+        .benefits-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .benefits-table strong {
+            color: #5d4037;
         }
 
         /* Verification Box */
@@ -783,50 +807,76 @@
                     
                     <strong style="display:block; margin-bottom:10px; color:#003399;">📋 FAEDAH KEAHLIAN:</strong>
                     
-                    <div style="font-size: 0.95em; line-height: 1.6;">
-                        
-                        <!-- Hadiah -->
-                        <div style="margin-bottom: 15px;">
-                            <strong style="color:var(--accent-color)">🎁 HADIAH</strong>
-                            <ul style="margin: 5px 0 0 20px; padding: 0; list-style-type: '👉 ';">
-                                <li>Berkahwin: <strong>RM30</strong></li>
-                                <li>Hari Jadi: <strong>RM20</strong></li>
-                            </ul>
-                        </div>
-
-                        <!-- Kelahiran -->
-                        <div style="margin-bottom: 15px;">
-                            <strong style="color:var(--accent-color)">👶 KELAHIRAN ANAK</strong> <span style="font-size:0.85em; color:#666;">(Ikut Tempoh)</span>
-                            <ul style="margin: 5px 0 0 20px; padding: 0; list-style-type: '👉 ';">
-                                <li>&lt; 3 tahun: <strong>RM30</strong></li>
-                                <li>&lt; 5 tahun: <strong>RM50</strong></li>
-                                <li>5 tahun ke atas: <strong>RM70</strong></li>
-                            </ul>
-                        </div>
-
-                        <!-- Bersara/Berpindah -->
-                        <div style="margin-bottom: 15px;">
-                            <strong style="color:var(--accent-color)">🏠 BERSARA / BERPINDAH</strong>
-                            <ul style="margin: 5px 0 0 20px; padding: 0; list-style-type: '👉 ';">
-                                <li>Kurang 1 tahun: <strong>RM100</strong></li>
-                                <li>Kurang 3 tahun: <strong>RM200</strong></li>
-                                <li>Kurang 5 tahun: <strong>RM300</strong></li>
-                                <li>Lebih 5 tahun: <strong>RM400</strong></li>
-                            </ul>
-                        </div>
-
-                        <!-- Kematian -->
-                        <div>
-                            <strong style="color:var(--accent-color)">💰 SUMBANGAN KEMATIAN</strong>
-                            <ul style="margin: 5px 0 0 20px; padding: 0; list-style-type: '👉 ';">
-                                <li>Kurang 1 tahun: <strong>RM200</strong></li>
-                                <li>Kurang 3 tahun: <strong>RM500</strong></li>
-                                <li>Kurang 5 tahun: <strong>RM800</strong></li>
-                                <li>Lebih 5 tahun: <strong>RM1000</strong></li>
-                            </ul>
-                        </div>
-
-                    </div>
+                    <!-- TABLE FAEDAH KEAHLIAN -->
+                    <table class="benefits-table">
+                        <thead>
+                            <tr>
+                                <th>Kategori</th>
+                                <th>Syarat / Tempoh</th>
+                                <th>Kadar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td rowspan="2"><strong>🎁 Hadiah</strong></td>
+                                <td>Berkahwin</td>
+                                <td>RM 30</td>
+                            </tr>
+                            <tr>
+                                <td>Hari Jadi</td>
+                                <td>RM 20</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="3"><strong>👶 Kelahiran Anak</strong><br><small>(Ikut Tempoh Keahlian)</small></td>
+                                <td>Kurang 3 Tahun</td>
+                                <td>RM 30</td>
+                            </tr>
+                            <tr>
+                                <td>Kurang 5 Tahun</td>
+                                <td>RM 50</td>
+                            </tr>
+                            <tr>
+                                <td>5 Tahun ke atas</td>
+                                <td>RM 70</td>
+                            </tr>
+                            <!-- Bersara/Berpindah -->
+                            <tr>
+                                <td rowspan="4"><strong>🏠 Bersara / Berpindah</strong><br><small>(Ikut Tempoh Keahlian)</small></td>
+                                <td>Kurang 1 Tahun</td>
+                                <td>RM 100</td>
+                            </tr>
+                            <tr>
+                                <td>Kurang 3 Tahun</td>
+                                <td>RM 200</td>
+                            </tr>
+                            <tr>
+                                <td>Kurang 5 Tahun</td>
+                                <td>RM 300</td>
+                            </tr>
+                            <tr>
+                                <td>Lebih 5 Tahun</td>
+                                <td>RM 400</td>
+                            </tr>
+                            <!-- Kematian -->
+                            <tr>
+                                <td rowspan="4"><strong>💰 Kematian Ahli</strong><br><small>(Ikut Tempoh Keahlian)</small></td>
+                                <td>Kurang 1 Tahun</td>
+                                <td>RM 200</td>
+                            </tr>
+                            <tr>
+                                <td>Kurang 3 Tahun</td>
+                                <td>RM 500</td>
+                            </tr>
+                            <tr>
+                                <td>Kurang 5 Tahun</td>
+                                <td>RM 800</td>
+                            </tr>
+                            <tr>
+                                <td>Lebih 5 Tahun</td>
+                                <td>RM 1000</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <!-- Checkbox Pengesahan -->
