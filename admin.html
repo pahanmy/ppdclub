@@ -72,7 +72,8 @@
         .main-logo {
             width: 80px;
             height: auto;
-            mix-blend-mode: multiply; 
+            /* mix-blend-mode: multiply; Buang jika logo sudah transparent */
+            filter: contrast(1.1);
         }
 
         h2 { margin: 0; color: var(--primary-color); font-weight: 800; text-transform: uppercase; }
@@ -241,7 +242,7 @@
 
         .badge-new { background-color: #ffeeba; color: #856404; }
         .badge-approved { background-color: #d4edda; color: #155724; }
-        .badge-blocked { background-color: #f8d7da; color: #721c24; } /* Merah untuk Disekat */
+        .badge-blocked { background-color: #f8d7da; color: #721c24; }
 
         /* Action Icons */
         .btn-icon {
@@ -259,7 +260,7 @@
         .btn-check { background-color: var(--success-color); }
         .btn-check:hover { background-color: #218838; }
         
-        .btn-block { background-color: var(--block-color); } /* Butang Sekat */
+        .btn-block { background-color: var(--block-color); }
         .btn-block:hover { background-color: #c0392b; }
 
         .btn-delete { background-color: #555; }
@@ -290,7 +291,8 @@
 <div class="container">
     <div class="header">
         <div class="header-title">
-            <img src="https://i.imgur.com/PVu4T7c.png" alt="Logo PPD Club" class="main-logo">
+            <!-- LOGO DIKEMASKINI -->
+            <img src="https://i.postimg.cc/3JqzZXqd/TRANSPARENT-BACK-GROUND.png" alt="Logo PPD Club" class="main-logo">
             <div>
                 <h2>Admin PPD CLUB</h2>
                 <p>Dashboard Pengurusan Keahlian</p>
