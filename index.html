@@ -161,6 +161,7 @@
         input[type="text"], 
         input[type="number"], 
         input[type="date"],
+        input[type="file"],
         select {
             width: 100%;
             padding: 15px;
@@ -182,6 +183,28 @@
             background: white;
             box-shadow: 0 0 0 4px rgba(37, 117, 252, 0.1);
             outline: none;
+        }
+
+        /* Photo Upload Styling */
+        .photo-preview-container {
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .photo-preview {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .upload-status {
+            font-size: 0.8em;
+            margin-top: 5px;
+            font-weight: bold;
         }
 
         /* Checkbox Styling */
@@ -428,12 +451,39 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
+        /* Layout Card Body untuk Imej */
         .card-body {
             display: flex;
-            flex-direction: column;
+            flex-direction: row; /* Tukar ke row untuk susun gambar sebelah teks */
             gap: 15px;
             position: relative;
             z-index: 2;
+            align-items: center;
+        }
+
+        .card-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card-photo-box {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.5);
+            overflow: hidden;
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .card-field {
@@ -615,6 +665,21 @@
                 <div class="form-group">
                     <label for="fullname">NAMA PENUH</label>
                     <input type="text" name="nama" id="fullname" placeholder="MASUKKAN NAMA PENUH SEPERTI DALAM IC" required>
+                </div>
+
+                <!-- Input Muat Naik Foto -->
+                <div class="form-group">
+                    <label for="photo_upload">FOTO PROFIL / PASPORT <span style="font-size: 0.8em; color: #888; font-weight: normal;">(Pilihan)</span></label>
+                    <input type="file" id="photo_upload" accept="image/*" onchange="uploadImage(this)">
+                    <small style="color: #666; font-size: 0.85em; display: block; margin-top: 5px;">
+                        Masukkan gambar untuk tujuan rekod keahlian. <strong>Tidak wajib</strong> (Optional).
+                    </small>
+                    
+                    <div class="photo-preview-container" id="photoPreviewBox">
+                        <img src="" alt="Preview" class="photo-preview" id="previewImg">
+                        <div id="uploadStatus" class="upload-status"></div>
+                    </div>
+                    <input type="hidden" id="foto_url" name="foto_url">
                 </div>
 
                 <div class="form-group">
@@ -822,26 +887,37 @@
                 </div>
                 <div class="card-subtitle">PREMIUM MEMBER</div>
             </div>
+            
+            <!-- Card Body Update: Flex Row untuk Gambar + Info -->
             <div class="card-body">
-                <div class="card-field">
-                    <div class="card-label">NAMA / NAME</div>
-                    <div class="card-value" id="cardName">ALI BIN ABU</div>
-                </div>
                 
-                <div style="display: flex; justify-content: space-between;">
-                    <div class="card-field">
-                        <div class="card-label">NO. K/P / ID</div>
-                        <div class="card-value" id="cardIC">850101-13-5050</div>
-                    </div>
-                    <div class="card-field" style="text-align: right;">
-                        <div class="card-label">TEMPOH CLUB</div>
-                        <div class="card-value" id="cardDuration">1 TAHUN</div>
-                    </div>
+                <!-- Kotak Gambar (Kiri) -->
+                <div class="card-photo-box" id="cardPhotoBox">
+                    <img src="https://via.placeholder.com/150?text=FOTO" alt="Foto Ahli" id="cardUserPhoto">
                 </div>
 
-                <div class="card-field">
-                    <div class="card-label">JAWATAN / POSITION</div>
-                    <div class="card-value" id="cardJawatan" style="font-size:0.85em; white-space: normal; line-height:1.2;">PEGAWAI PENDIDIKAN</div>
+                <!-- Info Teks (Kanan) -->
+                <div class="card-details">
+                    <div class="card-field">
+                        <div class="card-label">NAMA / NAME</div>
+                        <div class="card-value" id="cardName">ALI BIN ABU</div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between;">
+                        <div class="card-field">
+                            <div class="card-label">NO. K/P / ID</div>
+                            <div class="card-value" id="cardIC">850101-13-5050</div>
+                        </div>
+                        <div class="card-field" style="text-align: right;">
+                            <div class="card-label">TEMPOH CLUB</div>
+                            <div class="card-value" id="cardDuration">1 TAHUN</div>
+                        </div>
+                    </div>
+
+                    <div class="card-field">
+                        <div class="card-label">JAWATAN / POSITION</div>
+                        <div class="card-value" id="cardJawatan" style="font-size:0.85em; white-space: normal; line-height:1.2;">PEGAWAI PENDIDIKAN</div>
+                    </div>
                 </div>
             </div>
 
@@ -895,6 +971,9 @@
     const hiddenClubDuration = document.getElementById('hidden_club_duration');
     const icCheckLoader = document.getElementById('icCheckLoader');
     
+    // ImgBB API Key Variable - UPDATED
+    const imgbbAPIKey = 'a7c600ac733fe14649cacd8e65619c4b'; 
+
     // Global Vars for Edit Mode
     let editingDocId = null;
     let tempFoundData = null;
@@ -963,6 +1042,50 @@
         }
     });
 
+    // --- IMGBB UPLOAD LOGIC ---
+    window.uploadImage = function(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const statusDiv = document.getElementById('uploadStatus');
+        const previewBox = document.getElementById('photoPreviewBox');
+        const previewImg = document.getElementById('previewImg');
+        const hiddenUrlInput = document.getElementById('foto_url');
+
+        statusDiv.innerHTML = '<span style="color:blue;">Sedang memuat naik... <i class="fas fa-spinner fa-spin"></i></span>';
+        previewBox.style.display = 'block';
+        
+        // Show local preview immediately
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+
+        // Upload to ImgBB
+        const formData = new FormData();
+        formData.append('image', file);
+
+        fetch(`https://api.imgbb.com/1/upload?key=${imgbbAPIKey}`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                const imageUrl = result.data.url; // Get direct link
+                hiddenUrlInput.value = imageUrl;
+                statusDiv.innerHTML = '<span style="color:green;">Muat naik berjaya!</span>';
+            } else {
+                statusDiv.innerHTML = '<span style="color:red;">Gagal muat naik: ' + (result.error ? result.error.message : 'Ralat tidak diketahui') + '</span>';
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading:', error);
+            statusDiv.innerHTML = '<span style="color:red;">Ralat sambungan. Sila cuba lagi.</span>';
+        });
+    };
+
     // Function: Check if User Exists (Logic Baru)
     async function checkExistingRegistration(ic) {
         if (!db) return;
@@ -999,6 +1122,8 @@
                 extractICData(ic); // Re-calc DOB
                 editingDocId = null;
                 document.getElementById('mainSubmitBtn').innerText = "DAFTAR KEAHLIAN SEKARANG";
+                document.getElementById('photoPreviewBox').style.display = 'none'; // Hide preview
+                document.getElementById('foto_url').value = ''; // Reset hidden URL
             }
 
         } catch (error) {
@@ -1014,15 +1139,12 @@
         const phoneInput = document.getElementById('verify_phone').value.trim();
         const storedPhone = tempFoundData.phone;
 
-        // Simple comparison (ignoring dashes/spaces usually better, but sticking to exact for security)
         if (phoneInput === storedPhone) {
             alert("Pengesahan Berjaya! Sila kemaskini maklumat anda.");
             
-            // Sembunyi box verifikasi, tunjuk borang
             verificationBox.style.display = 'none';
             detailsDiv.style.display = 'block';
             
-            // Set Mode Edit
             editingDocId = tempFoundData.id;
             document.getElementById('mainSubmitBtn').innerText = "KEMASKINI MAKLUMAT";
 
@@ -1034,11 +1156,18 @@
             document.getElementById('phone').value = tempFoundData.phone;
             document.getElementById('start_date').value = tempFoundData.tarikh_mula;
             
+            // Handle Photo Preview if exists
+            if (tempFoundData.foto_url) {
+                document.getElementById('foto_url').value = tempFoundData.foto_url;
+                document.getElementById('previewImg').src = tempFoundData.foto_url;
+                document.getElementById('photoPreviewBox').style.display = 'block';
+                document.getElementById('uploadStatus').innerHTML = '<span style="color:green;">Gambar sedia ada dimuatkan.</span>';
+            }
+
             // Handle Jawatan
             const jawatanSelect = document.getElementById('jawatan_select');
             const jawatanCustom = document.getElementById('jawatan_custom');
             
-            // Check if jawatan is in select list
             let foundInList = false;
             for(let i=0; i<jawatanSelect.options.length; i++){
                 if(jawatanSelect.options[i].value === tempFoundData.jawatan){
@@ -1056,7 +1185,6 @@
                 jawatanCustom.style.display = 'none';
             }
 
-            // Trigger calc logic
             extractICData(tempFoundData.ic);
             startDateInput.dispatchEvent(new Event('change'));
 
@@ -1065,7 +1193,6 @@
         }
     }
 
-    // Tambahan: Pastikan input semakan IC juga hanya nombor
     const checkIcInput = document.getElementById('check_ic');
     if (checkIcInput) {
         checkIcInput.addEventListener('input', function() {
@@ -1172,46 +1299,48 @@
             loader.style.display = 'none';
             
             if (foundData) {
-                // Common Card Data
+                // Populate Card
                 document.getElementById('cardName').innerText = foundData.nama;
                 document.getElementById('cardIC').innerText = foundData.ic;
                 document.getElementById('cardJawatan').innerText = foundData.jawatan;
                 document.getElementById('cardDuration').innerText = foundData.tempoh_keahlian_club || "1 TAHUN";
                 document.getElementById('cardBarcode').innerText = "*" + foundData.ic + "*";
 
+                // Handle Photo in Card
+                const cardPhoto = document.getElementById('cardUserPhoto');
+                if (foundData.foto_url) {
+                    cardPhoto.src = foundData.foto_url;
+                } else {
+                    cardPhoto.src = "https://via.placeholder.com/150?text=TIADA"; // Fallback
+                }
+
                 const overlay = document.getElementById('cardOverlay');
                 const printBtn = document.getElementById('btnPrintCard');
                 const modalTitle = document.getElementById('modalTitle');
                 const modalSubtitle = document.getElementById('modalSubtitle');
 
-                // LOGIK STATUS
                 if (foundData.status === 'DISAHKAN') {
-                    // Jika Sah
                     modalTitle.innerText = "STATUS: AKTIF";
                     modalTitle.style.color = "var(--success-color)";
                     modalSubtitle.innerText = "Keahlian anda adalah SAH.";
-                    overlay.style.display = 'none'; // Sembunyi cop pending
-                    printBtn.style.display = 'inline-block'; // Tunjuk butang cetak
+                    overlay.style.display = 'none';
+                    printBtn.style.display = 'inline-block';
                 } else {
-                    // Jika Pending
                     modalTitle.innerText = "MENUNGGU PENGESAHAN";
                     modalTitle.style.color = "var(--warning-color)";
                     modalSubtitle.innerText = "Permohonan anda sedang disemak oleh Admin.";
-                    overlay.style.display = 'flex'; // Tunjuk cop pending
-                    printBtn.style.display = 'none'; // Sorok butang cetak
+                    overlay.style.display = 'flex';
+                    printBtn.style.display = 'none';
                 }
 
                 document.getElementById('registerFooter').style.display = 'none';
                 document.getElementById('checkFooter').style.display = 'block';
                 document.getElementById('confirmModal').style.display = 'flex';
             } else {
-                // Cadangan daftar terus jika tiada rekod
                 if (confirm("Tiada rekod ditemui untuk No. IC: " + checkIC + ".\n\nAdakah anda berminat untuk mendaftar keahlian sekarang?")) {
                     switchTab('daftar');
-                    // Pra-isi nombor IC di borang pendaftaran
                     const regIC = document.getElementById('ic_number');
                     regIC.value = checkIC;
-                    // Trigger event 'input' supaya logik ekstrak data berjalan
                     regIC.dispatchEvent(new Event('input'));
                 }
             }
@@ -1232,6 +1361,7 @@
         const agreement = document.getElementById('agreement_check');
         const ic = document.getElementById('ic_number').value;
         const clubDuration = document.getElementById('hidden_club_duration').value;
+        const fotoUrl = document.getElementById('foto_url').value;
         let jawatan = document.getElementById('jawatan_select').value;
         if (jawatan === 'LAIN-LAIN') jawatan = document.getElementById('jawatan_custom').value;
 
@@ -1248,13 +1378,19 @@
         document.getElementById('cardDuration').innerText = clubDuration || "BARU MENDAFTAR";
         document.getElementById('cardBarcode').innerText = "*" + ic + "*";
         
-        // Hide Pending Overlay during registration preview
+        // Handle Photo Preview in Card
+        const cardPhoto = document.getElementById('cardUserPhoto');
+        if (fotoUrl) {
+            cardPhoto.src = fotoUrl;
+        } else {
+            cardPhoto.src = "https://via.placeholder.com/150?text=FOTO";
+        }
+        
         document.getElementById('cardOverlay').style.display = 'none'; 
 
         document.getElementById('registerFooter').style.display = 'block';
         document.getElementById('checkFooter').style.display = 'none';
         
-        // Tukar text butang submit jika sedang mengemaskini
         const btnFinal = document.getElementById('btnFinalSubmit');
         if (editingDocId) {
             btnFinal.innerText = "SAHKAN & KEMASKINI";
@@ -1267,7 +1403,7 @@
 
     window.closeModal = function() { document.getElementById('confirmModal').style.display = 'none'; }
 
-    // --- FINAL SUBMIT LOGIC (Updated for Add/Edit) ---
+    // --- FINAL SUBMIT LOGIC ---
     window.finalSubmit = async function() {
         if (!db) { alert("Sistem Pangkalan Data tidak dapat dihubungi."); return; }
         if (!currentUser) { alert("Sistem sedang bersambung... Sila tunggu."); return; }
@@ -1291,14 +1427,14 @@
             tarikh_mula: document.getElementById('start_date').value,
             tempoh_khidmat: document.getElementById('hidden_duration').value,
             tempoh_keahlian_club: document.getElementById('hidden_club_duration').value,
+            foto_url: document.getElementById('foto_url').value, // Add Photo URL
             phone: document.getElementById('phone').value,
-            status: "PENDING", // Sentiasa reset ke Pending bila update
+            status: "PENDING", 
             timestamp: new Date().toISOString()
         };
 
         try {
             if (editingDocId) {
-                // KEMASKINI REKOD SEDIA ADA
                 await updateDoc(doc(db, 'ppd_registrations', editingDocId), registrationData);
                 document.getElementById('statusMessage').innerText = "KEMASKINI BERJAYA!";
                 setTimeout(() => {
@@ -1306,13 +1442,14 @@
                     window.closeModal();
                     document.getElementById('registrationForm').reset();
                     detailsDiv.style.display = 'none';
-                    editingDocId = null; // Reset ID
-                    document.getElementById('mainSubmitBtn').innerText = "DAFTAR KEAHLIAN SEKARANG"; // Reset text
+                    editingDocId = null;
+                    document.getElementById('mainSubmitBtn').innerText = "DAFTAR KEAHLIAN SEKARANG";
+                    document.getElementById('photoPreviewBox').style.display = 'none';
+                    document.getElementById('foto_url').value = '';
                     modalBtns.style.display = 'flex';
                     document.getElementById('statusMessage').innerText = "";
                 }, 500);
             } else {
-                // DAFTAR BARU
                 await addDoc(collection(db, 'ppd_registrations'), registrationData);
                 document.getElementById('statusMessage').innerText = "PENDAFTARAN BERJAYA!";
                 setTimeout(() => {
@@ -1320,6 +1457,8 @@
                     window.closeModal();
                     document.getElementById('registrationForm').reset();
                     detailsDiv.style.display = 'none';
+                    document.getElementById('photoPreviewBox').style.display = 'none';
+                    document.getElementById('foto_url').value = '';
                     modalBtns.style.display = 'flex';
                     document.getElementById('statusMessage').innerText = "";
                 }, 500);
