@@ -26,13 +26,12 @@
             margin: 0;
             padding: 20px;
             display: flex;
-            /* Logo di atas kotak (Column) */
             flex-direction: column; 
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             color: #333;
-            gap: 20px; /* Jarak antara logo dan kotak */
+            gap: 20px;
         }
 
         @keyframes gradientBG {
@@ -41,14 +40,12 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Animasi Melompat (Float) */
         @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
 
-        /* Styling Logo Utama (Di luar kotak) */
         .main-logo {
             width: 160px; 
             height: auto;
@@ -101,7 +98,6 @@
             font-weight: 300;
         }
         
-        /* Contact & Link Buttons Container */
         .header-actions {
             display: flex;
             justify-content: center;
@@ -123,7 +119,6 @@
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* WhatsApp Button */
         .whatsapp-link {
             background: white;
             color: #25D366;
@@ -137,7 +132,6 @@
             color: white;
         }
 
-        /* Wall of Members Button */
         .wall-link {
             background: linear-gradient(45deg, #FFD700, #FDB931);
             color: #333;
@@ -151,7 +145,6 @@
             color: #FDB931;
         }
 
-        /* NEW: Finance Link Button */
         .finance-link {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             color: white;
@@ -164,7 +157,6 @@
             background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
         }
 
-        /* Modern Tabs */
         .nav-tabs {
             display: flex;
             background: #f1f3f5;
@@ -192,7 +184,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        /* Form Styling */
         .form-group {
             margin-bottom: 20px;
             position: relative;
@@ -234,7 +225,6 @@
             outline: none;
         }
 
-        /* Photo Upload Styling */
         .photo-preview-container {
             text-align: center;
             margin-top: 10px;
@@ -256,7 +246,6 @@
             font-weight: bold;
         }
 
-        /* Checkbox Styling */
         .checkbox-group {
             display: flex;
             align-items: flex-start;
@@ -289,7 +278,7 @@
             margin: 0;
         }
 
-        /* Fee Notice & Table Styling */
+        /* Fee Notice & Table Styling Updated */
         .fee-notice {
             background: linear-gradient(to right, #fff3cd, #fff8e1);
             color: #856404;
@@ -334,7 +323,6 @@
             color: #5d4037;
         }
 
-        /* Verification Box */
         .verification-box {
             background-color: #e3f2fd;
             border: 2px solid #2196f3;
@@ -366,7 +354,6 @@
         }
         .btn-verify:hover { background: #1976d2; }
 
-        /* Buttons */
         .btn-submit {
             background: var(--primary-gradient);
             color: white;
@@ -387,7 +374,6 @@
             box-shadow: 0 15px 25px rgba(0, 51, 153, 0.4);
         }
 
-        /* Standard Modern Modal Styles */
         .modal {
             display: none; 
             position: fixed; 
@@ -419,7 +405,6 @@
             gap: 15px;
         }
 
-        /* Close Button (X) */
         .close-btn {
             position: absolute;
             top: 15px;
@@ -441,12 +426,10 @@
             to { transform: scale(1) translateY(0); opacity: 1; }
         }
 
-        /* PREMIUM MEMBER CARD STYLES - GOLD EDITION */
         .member-card {
-            /* Latar belakang Emas Mewah */
             background: radial-gradient(ellipse farthest-corner at right bottom, #FEDB37 0%, #FDB931 8%, #9f7928 30%, #8A6E2F 40%, transparent 80%),
                         radial-gradient(ellipse farthest-corner at left top, #FFFFFF 0%, #FFFFAC 8%, #D1B464 25%, #5d4a1f 62.5%, #5d4a1f 100%);
-            color: #2c3e50; /* Teks gelap supaya kontras dengan emas */
+            color: #2c3e50; 
             padding: 25px;
             border-radius: 16px;
             box-shadow: 
@@ -460,7 +443,6 @@
             transition: opacity 0.3s;
         }
 
-        /* Efek Berkilat/Texture */
         .member-card::after {
             content: '';
             position: absolute;
@@ -595,7 +577,6 @@
             line-height: 1;
         }
 
-        /* Overlay untuk status PENDING pada kad */
         .pending-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -838,39 +819,52 @@
 
                 <div class="fee-notice">
                     <div style="text-align: center; margin-bottom: 15px;">
-                        <strong style="font-size: 1.2em; color: #856404; letter-spacing:1px;">📢 MAKLUMAN PENTING</strong>
+                        <strong style="font-size: 1.2em; color: #856404; letter-spacing:1px;">
+                            <i class="fas fa-bullhorn"></i> MAKLUMAN PENTING
+                        </strong>
                     </div>
                     
                     <p style="margin-bottom: 15px; border-bottom: 1px dashed #d3b95f; padding-bottom: 15px;">
                         Yuran keahlian PPD CLUB adalah sebanyak <strong style="font-size:1.1em">RM60.00 SETAHUN</strong>. 
                         <br><br>
+                        <span style="font-size: 0.9em; color: #d35400; font-weight: bold;">
+                            <i class="fas fa-exclamation-triangle"></i> SYARAT KELAYAKAN:
+                        </span>
+                        <br>
+                        <span style="font-size: 0.9em;">
+                            Ahli mesti mempunyai tempoh keahlian sekurang-kurangnya <strong>24 bulan (2 tahun)</strong> untuk layak menerima sebarang faedah di bawah.
+                        </span>
+                        <br><br>
                         <span style="font-size: 0.85em; font-style: italic; opacity:0.8;">
-                            *Hasil Mesyuarat Jawatankuasa Induk PPD Club Bilangan 1 Tahun 2024 pada 29 November 2024.
+                            *Hasil Mesyuarat Jawatankuasa Induk PPD Club Bilangan 1 Tahun 2026 pada 12 Januari 2026.
                         </span>
                     </p>
                     
-                    <strong style="display:block; margin-bottom:10px; color:#003399;">🎁 FAEDAH KEAHLIAN:</strong>
+                    <strong style="display:block; margin-bottom:10px; color:#003399;">
+                        <i class="fas fa-gift"></i> FAEDAH AHLI PPD CLUB:
+                    </strong>
                     
                     <table class="benefits-table">
                         <thead>
                             <tr>
-                                <th>Kategori</th>
-                                <th>Syarat / Tempoh</th>
-                                <th>Kadar</th>
+                                <th width="40%">Kategori</th>
+                                <th width="35%">Syarat / Tempoh</th>
+                                <th width="25%">Kadar</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td rowspan="2"><strong>🎂 Hadiah</strong></td>
-                                <td>Berkahwin</td>
-                                <td>RM 30</td>
+                                <td>
+                                    <i class="fas fa-heart" style="color:#e74c3c;"></i> <strong>Berkahwin</strong>
+                                </td>
+                                <td>Kali Pertama Sahaja</td>
+                                <td>RM 70</td>
                             </tr>
+
                             <tr>
-                                <td>Hari Jadi</td>
-                                <td>RM 20</td>
-                            </tr>
-                            <tr>
-                                <td rowspan="3"><strong>👶 Kelahiran Anak</strong><br><small>(Ikut Tempoh Keahlian)</small></td>
+                                <td rowspan="3">
+                                    <i class="fas fa-baby" style="color:#3498db;"></i> <strong>Kelahiran Anak</strong>
+                                </td>
                                 <td>Kurang 3 Tahun</td>
                                 <td>RM 30</td>
                             </tr>
@@ -882,12 +876,11 @@
                                 <td>5 Tahun ke atas</td>
                                 <td>RM 70</td>
                             </tr>
+
                             <tr>
-                                <td rowspan="4"><strong>👋 Bersara / Berpindah</strong><br><small>(Ikut Tempoh Keahlian)</small></td>
-                                <td>Kurang 1 Tahun</td>
-                                <td>RM 100</td>
-                            </tr>
-                            <tr>
+                                <td rowspan="3">
+                                    <i class="fas fa-truck-moving" style="color:#f39c12;"></i> <strong>Berpindah</strong>
+                                </td>
                                 <td>Kurang 3 Tahun</td>
                                 <td>RM 200</td>
                             </tr>
@@ -896,15 +889,30 @@
                                 <td>RM 300</td>
                             </tr>
                             <tr>
-                                <td>Lebih 5 Tahun</td>
+                                <td>5 Tahun ke atas</td>
                                 <td>RM 400</td>
                             </tr>
+
                             <tr>
-                                <td rowspan="4"><strong>💸 Kematian Ahli</strong><br><small>(Ikut Tempoh Keahlian)</small></td>
-                                <td>Kurang 1 Tahun</td>
+                                <td rowspan="3">
+                                    <i class="fas fa-user-clock" style="color:#27ae60;"></i> <strong>Bersara</strong>
+                                </td>
+                                <td>Kurang 3 Tahun</td>
                                 <td>RM 200</td>
                             </tr>
                             <tr>
+                                <td>Kurang 5 Tahun</td>
+                                <td>RM 300</td>
+                            </tr>
+                            <tr>
+                                <td>5 Tahun ke atas</td>
+                                <td>RM 800</td>
+                            </tr>
+
+                            <tr>
+                                <td rowspan="3">
+                                    <i class="fas fa-ribbon" style="color:#2c3e50;"></i> <strong>Kematian Ahli</strong>
+                                </td>
                                 <td>Kurang 3 Tahun</td>
                                 <td>RM 500</td>
                             </tr>
@@ -913,7 +921,7 @@
                                 <td>RM 800</td>
                             </tr>
                             <tr>
-                                <td>Lebih 5 Tahun</td>
+                                <td>5 Tahun ke atas</td>
                                 <td>RM 1000</td>
                             </tr>
                         </tbody>
@@ -943,7 +951,7 @@
 
     <div id="checkSection" style="display: none;">
         <div style="text-align: center; margin-bottom: 30px;">
-            <div style="font-size: 3em; margin-bottom: 10px;">🔍</div>
+            <div style="font-size: 3em; margin-bottom: 10px;">剥</div>
             <h3 style="margin:0; color:#444;">SEMAKAN STATUS</h3>
             <p style="color: #888;">Masukkan No. Kad Pengenalan anda untuk menyemak.</p>
         </div>
