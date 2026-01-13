@@ -97,6 +97,61 @@
         .stat-number { font-size: 2em; font-weight: 800; color: var(--primary-color); }
         .stat-label { font-size: 0.9em; color: #777; text-transform: uppercase; letter-spacing: 1px; }
 
+        /* --- TABS STYLE (BARU) --- */
+        .tabs-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 15px;
+            font-size: 1em;
+            font-weight: 600;
+            color: #777;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -7px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        .tab-count {
+            background: #eee;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+        
+        .tab-btn.active .tab-count {
+            background: var(--primary-color);
+            color: white;
+        }
+
         /* Controls */
         .controls {
             display: flex;
@@ -112,25 +167,28 @@
         }
 
         .search-box {
-            flex: 1;
-            min-width: 250px;
+            /* DIUBAH: Kecilkan saiz search box */
+            flex: none; 
+            width: 250px; 
             position: relative;
         }
 
         .search-box input {
             width: 100%;
-            padding: 12px 15px 12px 40px;
+            padding: 10px 15px 10px 35px; /* Padding disesuaikan */
             border: 1px solid #ddd;
             border-radius: 50px;
             font-family: inherit;
+            font-size: 0.9em;
         }
 
         .search-box i {
             position: absolute;
-            left: 15px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
             color: #aaa;
+            font-size: 0.9em;
         }
 
         .bulk-controls {
@@ -141,6 +199,8 @@
             padding: 5px 15px;
             border-radius: 50px;
             border: 1px solid #eee;
+            flex-grow: 1; /* Isi ruang kosong */
+            justify-content: flex-start;
         }
 
         .action-buttons {
@@ -150,7 +210,7 @@
         }
 
         button {
-            padding: 10px 20px;
+            padding: 8px 18px; /* Sedikit kecilkan butang */
             border: none;
             border-radius: 50px;
             cursor: pointer;
@@ -160,7 +220,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.9em;
+            font-size: 0.85em;
         }
 
         .btn-refresh { background-color: #e2e6ea; color: #333; }
@@ -399,10 +459,19 @@
         </div>
     </div>
 
+    <div class="tabs-container">
+        <button class="tab-btn active" id="tab-pending" onclick="switchTab('pending')">
+            Belum Diproses <span class="tab-count" id="count-badge-pending">0</span>
+        </button>
+        <button class="tab-btn" id="tab-approved" onclick="switchTab('approved')">
+            Senarai Disahkan <span class="tab-count" id="count-badge-approved">0</span>
+        </button>
+    </div>
+
     <div class="controls">
         <div class="search-box">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Cari Nama atau IC..." onkeyup="searchTable()">
+            <input type="text" id="searchInput" placeholder="Cari Nama atau IC..." onkeyup="applyFilters()">
         </div>
         
         <div class="bulk-controls">
@@ -410,7 +479,7 @@
             <input type="date" id="bulkDateInput" class="table-input date-input" style="background:white;">
             
             <button class="btn-date-bulk" id="btnBulkDate" onclick="bulkUpdateDate()" title="Set tarikh untuk ahli yang dipilih">
-                <i class="fas fa-calendar-alt"></i> Set Tarikh
+                <i class="fas fa-calendar-alt"></i> Set
             </button>
         </div>
 
@@ -475,6 +544,8 @@
     let currentUser = null;
     let allData = []; 
     let currentSort = { key: 'status', order: 'asc' }; 
+    // State Tab Semasa
+    let currentTab = 'pending'; // 'pending' (belum proses) atau 'approved' (disahkan/disekat)
 
     try {
         const app = initializeApp(firebaseConfig);
@@ -531,7 +602,8 @@
 
             updateStats(); 
             sortDataArray(allData, currentSort.key, currentSort.order);
-            renderTable(allData);
+            // Render mengikut tab semasa
+            applyFilters();
 
         } catch (error) {
             console.error("Error loading data:", error);
@@ -540,6 +612,50 @@
             loader.style.display = 'none';
             table.style.opacity = '1';
         }
+    }
+
+    // --- FUNGSI TAB BARU ---
+    window.switchTab = function(tabName) {
+        currentTab = tabName;
+        
+        // Update butang UI
+        document.getElementById('tab-pending').classList.remove('active');
+        document.getElementById('tab-approved').classList.remove('active');
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+        
+        // Reset checkbox
+        document.getElementById('selectAll').checked = false;
+        
+        // Render semula data
+        applyFilters();
+    }
+
+    // --- FUNGSI PENAPISAN (FILTER) MASTER ---
+    window.applyFilters = function() {
+        const searchInput = document.getElementById('searchInput').value.toUpperCase();
+        
+        // 1. Tapis mengikut Tab
+        let filtered = allData.filter(item => {
+            if (currentTab === 'pending') {
+                // Tunjuk yang BELUM disahkan (Status != DISAHKAN dan != DISEKAT)
+                return item.status !== 'DISAHKAN' && item.status !== 'DISEKAT';
+            } else {
+                // Tunjuk yang SUDAH diproses (DISAHKAN atau DISEKAT)
+                return item.status === 'DISAHKAN' || item.status === 'DISEKAT';
+            }
+        });
+
+        // 2. Tapis mengikut Carian (Search)
+        if (searchInput) {
+            filtered = filtered.filter(item => {
+                const name = (item.nama || '').toUpperCase();
+                const ic = (item.ic || '').toUpperCase();
+                return name.includes(searchInput) || ic.includes(searchInput);
+            });
+        }
+
+        renderTable(filtered);
+        updateBulkButton(); // Reset butang bulk
     }
 
     function maskIC(ic) {
@@ -596,7 +712,7 @@
         tbody.innerHTML = '';
 
         if (dataArray.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:30px;">Tiada rekod ditemui.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:30px;">Tiada rekod dalam kategori ini.</td></tr>`;
             return;
         }
 
@@ -707,7 +823,7 @@
             currentSort.order = 'asc';
         }
         sortDataArray(allData, currentSort.key, currentSort.order);
-        renderTable(allData);
+        applyFilters(); // Guna applyFilters untuk kekalkan tab
     }
 
     function sortDataArray(arr, key, order) {
@@ -812,7 +928,7 @@
                 successCount++;
             }
             alert(`Berjaya! Tarikh dikemaskini untuk ${successCount} ahli.`);
-            renderTable(allData); // Re-render to show updates
+            applyFilters(); // Refresh view
         } catch (error) {
             console.error("Bulk date error:", error);
             alert("Berlaku ralat.");
@@ -836,15 +952,7 @@
         }
     }
 
-    window.searchTable = function() {
-        const input = document.getElementById('searchInput').value.toUpperCase();
-        const filtered = allData.filter(item => {
-            const name = (item.nama || '').toUpperCase();
-            const ic = (item.ic || '').toUpperCase();
-            return name.includes(input) || ic.includes(input);
-        });
-        renderTable(filtered);
-    }
+    // searchTable telah digantikan dengan applyFilters di atas
 
     // 6. Verify Single
     window.verifySingle = async function(docId) {
@@ -872,7 +980,7 @@
             item.status = "DISAHKAN";
             
             alert("Permohonan berjaya disahkan!");
-            renderTable(allData); 
+            applyFilters(); 
             updateStats();
         } catch (error) {
             console.error("Error verifying:", error);
@@ -888,7 +996,7 @@
             const item = allData.find(x => x.id === docId);
             if (item) item.status = "DISEKAT";
             alert("Permohonan berjaya disekat.");
-            renderTable(allData); 
+            applyFilters(); 
             updateStats();
         } catch (error) {
             console.error("Error blocking:", error);
@@ -901,7 +1009,7 @@
         try {
             await deleteDoc(doc(db, 'ppd_registrations', docId));
             allData = allData.filter(x => x.id !== docId);
-            renderTable(allData);
+            applyFilters();
             updateStats();
             alert("Rekod berjaya dipadam.");
         } catch (error) {
@@ -926,7 +1034,6 @@
         countSpan.innerText = count;
         
         btn.disabled = count === 0;
-        // btnDate is no longer disabled by selection count
     }
 
     window.bulkApprove = async function() {
@@ -983,7 +1090,7 @@
                 }
             }
             alert(`Proses selesai! ${successCount} permohonan telah disahkan.`);
-            renderTable(allData);
+            applyFilters();
             updateStats();
         } catch (error) {
             console.error("Bulk error:", error);
@@ -1044,6 +1151,10 @@
         document.getElementById('pendingCount').innerText = pending;
         document.getElementById('approvedCount').innerText = approved;
         document.getElementById('blockedCount').innerText = blocked;
+
+        // Update badge pada tab
+        document.getElementById('count-badge-pending').innerText = pending;
+        document.getElementById('count-badge-approved').innerText = approved + blocked;
     }
 
 </script>
