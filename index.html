@@ -79,7 +79,7 @@
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .header h2 {
@@ -106,6 +106,65 @@
             flex-wrap: wrap;
             margin-top: 15px;
         }
+
+        /* --- STATS INFOGRAPHIC --- */
+        .stats-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: 800;
+            line-height: 1.2;
+            color: #333;
+        }
+
+        .stat-label {
+            font-size: 0.6em;
+            text-transform: uppercase;
+            color: #777;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Stat Colors */
+        .stat-pending .stat-icon { color: var(--warning-color); }
+        .stat-pending { border-bottom: 3px solid var(--warning-color); }
+
+        .stat-approved .stat-icon { color: var(--success-color); }
+        .stat-approved { border-bottom: 3px solid var(--success-color); }
+
+        .stat-total .stat-icon { color: var(--primary-color); }
+        .stat-total { border-bottom: 3px solid var(--primary-color); }
+        /* ----------------------- */
+
 
         /* BUTTON STYLES */
         .whatsapp-link, .wall-link, .finance-link {
@@ -379,7 +438,7 @@
             top: 0;
             width: 100%; 
             height: 100%; 
-            overflow: auto; /* Allow scroll if screen small */
+            overflow: auto; 
             background-color: rgba(0,0,0,0.5); 
             backdrop-filter: blur(5px);
             align-items: center;
@@ -432,7 +491,7 @@
             margin: 0 auto 15px auto;
             font-family: 'Poppins', sans-serif;
             width: 100%;
-            height: 240px; /* Fixed height for card shape */
+            height: 240px; 
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -721,6 +780,24 @@
             <a href="https://docs.google.com/spreadsheets/d/1Xzju-uMp1jfzWiRECTELXhNadzy7J_CLVApqaRayUd0/edit?gid=1917826811#gid=1917826811" target="_blank" class="finance-link">
                 <i class="fas fa-file-invoice-dollar" style="font-size: 1.2em; margin-right: 8px;"></i> Akaun Kewangan
             </a>
+        </div>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-card stat-pending">
+            <div class="stat-icon"><i class="fas fa-user-clock"></i></div>
+            <div class="stat-number" id="stat-pending">0</div>
+            <div class="stat-label">Menunggu Pengesahan</div>
+        </div>
+        <div class="stat-card stat-approved">
+            <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+            <div class="stat-number" id="stat-approved">0</div>
+            <div class="stat-label">Keahlian Disahkan</div>
+        </div>
+        <div class="stat-card stat-total">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-number" id="stat-total">0</div>
+            <div class="stat-label">Jumlah Keseluruhan</div>
         </div>
     </div>
 
@@ -1175,10 +1252,57 @@
             if (user) {
                 currentUser = user;
                 console.log("System Ready. User ID:", user.uid);
+                // Call stats after auth ready
+                fetchStats();
             }
         });
     } catch (e) {
         console.error("Error initializing Firebase:", e);
+    }
+    
+    // --- STATS FUNCTION ---
+    async function fetchStats() {
+        if (!db) return;
+        try {
+            const querySnapshot = await getDocs(collection(db, 'ppd_registrations'));
+            let total = 0;
+            let approved = 0;
+            let pending = 0;
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                total++;
+                if (data.status === 'DISAHKAN') {
+                    approved++;
+                } else {
+                    pending++; // Assuming anything not confirmed is pending/memohon
+                }
+            });
+
+            animateValue("stat-total", 0, total, 1000);
+            animateValue("stat-approved", 0, approved, 1000);
+            animateValue("stat-pending", 0, pending, 1000);
+
+        } catch (error) {
+            console.error("Error fetching stats:", error);
+        }
+    }
+
+    function animateValue(id, start, end, duration) {
+        if (start === end) return;
+        const range = end - start;
+        let current = start;
+        const increment = end > start ? 1 : -1;
+        const stepTime = Math.abs(Math.floor(duration / range));
+        const obj = document.getElementById(id);
+        
+        const timer = setInterval(function() {
+            current += increment;
+            obj.innerHTML = current;
+            if (current == end) {
+                clearInterval(timer);
+            }
+        }, stepTime > 50 ? 50 : stepTime); // Cap speed
     }
 
     // --- FORM LOGIC ---
@@ -1636,6 +1760,8 @@
             if (editingDocId) {
                 await updateDoc(doc(db, 'ppd_registrations', editingDocId), registrationData);
                 document.getElementById('statusMessage').innerText = "KEMASKINI BERJAYA!";
+                // Refresh stats
+                fetchStats();
                 setTimeout(() => {
                     alert("MAKLUMAT DIKEMASKINI!\nStatus kini kembali kepada: MENUNGGU PENGESAHAN.");
                     window.closeModal();
@@ -1651,6 +1777,8 @@
             } else {
                 await addDoc(collection(db, 'ppd_registrations'), registrationData);
                 document.getElementById('statusMessage').innerText = "PENDAFTARAN BERJAYA!";
+                // Refresh stats
+                fetchStats();
                 setTimeout(() => {
                     // Papar mesej bayaran dalam alert
                     let msg = "PENDAFTARAN DITERIMA!\nStatus kini: MENUNGGU PENGESAHAN.";
