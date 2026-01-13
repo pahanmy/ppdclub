@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - PPD CLUB Miri</title>
-    <!-- Import Font & Icon -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Import SheetJS untuk Export Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
@@ -187,6 +185,8 @@
             overflow-x: auto;
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            max-height: 700px; /* Limit height for sticky header */
+            overflow-y: auto;
         }
 
         table {
@@ -203,6 +203,7 @@
             vertical-align: middle;
         }
 
+        /* STICKY HEADER FIX */
         th {
             background-color: #f8f9fa;
             color: #555;
@@ -213,11 +214,20 @@
             cursor: pointer;
             user-select: none;
             white-space: nowrap;
+            position: sticky; /* Make header sticky */
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
         }
         
         th:hover {
             background-color: #e9ecef;
             color: var(--primary-color);
+        }
+
+        .sort-active {
+            color: var(--primary-color) !important;
+            background-color: #e9ecef;
         }
 
         tr:hover { background-color: #f1f5f9; }
@@ -243,7 +253,7 @@
         }
         
         .member-id-input {
-            width: 110px;
+            width: 100px; /* Fixed width */
             text-align: center;
             font-weight: bold;
             color: var(--primary-color);
@@ -252,8 +262,9 @@
         }
 
         .date-input {
-            width: 130px;
+            width: 125px; /* Fixed width */
             font-family: inherit;
+            font-size: 0.85em;
         }
         
         .table-input:focus {
@@ -329,6 +340,28 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         .custom-checkbox { transform: scale(1.2); cursor: pointer; }
+        
+        /* IC Toggle Style */
+        .ic-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            border: 1px solid #eee;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .ic-toggle-btn {
+            color: #aaa;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-left: 8px;
+        }
+        .ic-toggle-btn:hover { color: var(--primary-color); }
+
     </style>
 </head>
 <body>
@@ -347,7 +380,6 @@
         </div>
     </div>
 
-    <!-- Statistik -->
     <div class="stats-container">
         <div class="stat-card">
             <div class="stat-number" id="totalCount">0</div>
@@ -367,7 +399,6 @@
         </div>
     </div>
 
-    <!-- Kawalan -->
     <div class="controls">
         <div class="search-box">
             <i class="fas fa-search"></i>
@@ -378,7 +409,6 @@
             <label for="bulkDateInput" style="margin:0; font-size:0.85em; font-weight:600; color:#555;">Tarikh Pukal:</label>
             <input type="date" id="bulkDateInput" class="table-input date-input" style="background:white;">
             
-            <!-- Butang Set Tarikh Pukal (Removed Disabled Attribute) -->
             <button class="btn-date-bulk" id="btnBulkDate" onclick="bulkUpdateDate()" title="Set tarikh untuk ahli yang dipilih">
                 <i class="fas fa-calendar-alt"></i> Set Tarikh
             </button>
@@ -394,7 +424,6 @@
         </div>
     </div>
 
-    <!-- Jadual -->
     <div class="table-responsive">
         <div id="loader" class="loader-container">
             <div class="loader"></div>
@@ -407,19 +436,20 @@
                     <th style="width: 40px; text-align: center;">
                         <input type="checkbox" id="selectAll" class="custom-checkbox" onchange="toggleSelectAll()">
                     </th>
-                    <th style="width: 60px;">Foto</th>
-                    <th onclick="sortTable('nama')">Nama Ahli <i class="fas fa-sort"></i></th>
-                    <th onclick="sortTable('ic')">No. IC <i class="fas fa-sort"></i></th>
-                    <th onclick="sortTable('jawatan')">Jawatan <i class="fas fa-sort"></i></th>
-                    <th onclick="sortTable('no_keahlian')" style="width: 140px; background-color: #e3f2fd;">No. Keahlian <i class="fas fa-sort"></i></th>
-                    <th style="width: 160px; background-color: #e8f5e9;">Tarikh Keahlian</th>
-                    <th onclick="sortTable('status')">Status <i class="fas fa-sort"></i></th>
-                    <th style="text-align: center; width: 120px;">Tindakan</th>
+                    <th style="width: 50px;">Foto</th>
+                    <th onclick="sortTable('nama')" id="th-nama">Nama Ahli <i class="fas fa-sort"></i></th>
+                    
+                    <th onclick="sortTable('ic')" id="th-ic" style="width: 150px;">No. IC <i class="fas fa-sort"></i></th>
+                    
+                    <th onclick="sortTable('jawatan')" id="th-jawatan">Jawatan <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable('no_keahlian')" id="th-no_keahlian" style="width: 130px; background-color: #e3f2fd;">No. Keahlian <i class="fas fa-sort"></i></th>
+                    <th style="width: 150px; background-color: #e8f5e9;">Tarikh Keahlian</th>
+                    <th onclick="sortTable('status')" id="th-status">Status <i class="fas fa-sort"></i></th>
+                    <th style="text-align: center; width: 110px;">Tindakan</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
-                <!-- Data akan dimasukkan di sini -->
-            </tbody>
+                </tbody>
         </table>
     </div>
 </div>
@@ -516,6 +546,29 @@
         if (!ic || ic.length < 12) return ic || '-';
         return ic.substring(0, 6) + '-' + ic.substring(6, 8) + '-****';
     }
+    
+    // Global function to toggle IC visibility
+    window.toggleIC = function(id, fullIC) {
+        const displaySpan = document.getElementById(`ic-display-${id}`);
+        const icon = document.getElementById(`ic-icon-${id}`);
+        
+        if (displaySpan.getAttribute('data-visible') === 'true') {
+            // Sembunyikan semula
+            displaySpan.innerText = maskIC(fullIC);
+            displaySpan.setAttribute('data-visible', 'false');
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+            displaySpan.style.color = "#333";
+        } else {
+            // Tunjuk Penuh (Formatted)
+            const formatted = fullIC.substring(0, 6) + '-' + fullIC.substring(6, 8) + '-' + fullIC.substring(8);
+            displaySpan.innerText = formatted;
+            displaySpan.setAttribute('data-visible', 'true');
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+            displaySpan.style.color = "var(--primary-color)";
+        }
+    }
 
     function getNextMembershipId(year) {
         const currentYear = year || new Date().getFullYear();
@@ -586,13 +639,24 @@
                         <input type="checkbox" class="select-row custom-checkbox" value="${item.id}" onchange="updateBulkButton()">
                     </td>
                     <td style="text-align: center;">
-                        <img src="${photoUrl}" class="table-avatar" alt="Foto">
+                        <a href="${photoUrl}" target="_blank">
+                            <img src="${photoUrl}" class="table-avatar" alt="Foto">
+                        </a>
                     </td>
                     <td>
                         <strong>${item.nama || '-'}</strong><br>
                         <small style="color:#888;">${item.phone || '-'}</small>
                     </td>
-                    <td style="font-family: monospace;">${maskIC(item.ic)}</td>
+                    
+                    <td>
+                        <div class="ic-wrapper">
+                            <span id="ic-display-${item.id}" data-visible="false">${maskIC(item.ic)}</span>
+                            <i id="ic-icon-${item.id}" class="fas fa-eye ic-toggle-btn" 
+                               onclick="toggleIC('${item.id}', '${item.ic}')" 
+                               title="Lihat Penuh"></i>
+                        </div>
+                    </td>
+
                     <td>
                         ${item.jawatan || '-'}<br>
                         <small style="color:#666;">${item.sektor || '-'}</small>
@@ -632,6 +696,10 @@
 
     // 3. Fungsi Sort
     window.sortTable = function(key) {
+        // Reset Visual Indicator
+        document.querySelectorAll('th').forEach(th => th.classList.remove('sort-active'));
+        document.getElementById(`th-${key}`).classList.add('sort-active');
+
         if (currentSort.key === key) {
             currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
         } else {
