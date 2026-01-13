@@ -97,7 +97,7 @@
         .stat-number { font-size: 2em; font-weight: 800; color: var(--primary-color); }
         .stat-label { font-size: 0.9em; color: #777; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* --- TABS STYLE (BARU) --- */
+        /* TABS STYLE */
         .tabs-container {
             display: flex;
             gap: 20px;
@@ -119,13 +119,8 @@
             font-family: inherit;
         }
 
-        .tab-btn:hover {
-            color: var(--primary-color);
-        }
-
-        .tab-btn.active {
-            color: var(--primary-color);
-        }
+        .tab-btn:hover { color: var(--primary-color); }
+        .tab-btn.active { color: var(--primary-color); }
 
         .tab-btn.active::after {
             content: '';
@@ -167,7 +162,6 @@
         }
 
         .search-box {
-            /* DIUBAH: Kecilkan saiz search box */
             flex: none; 
             width: 250px; 
             position: relative;
@@ -175,7 +169,7 @@
 
         .search-box input {
             width: 100%;
-            padding: 10px 15px 10px 35px; /* Padding disesuaikan */
+            padding: 10px 15px 10px 35px;
             border: 1px solid #ddd;
             border-radius: 50px;
             font-family: inherit;
@@ -199,7 +193,7 @@
             padding: 5px 15px;
             border-radius: 50px;
             border: 1px solid #eee;
-            flex-grow: 1; /* Isi ruang kosong */
+            flex-grow: 1;
             justify-content: flex-start;
         }
 
@@ -210,7 +204,7 @@
         }
 
         button {
-            padding: 8px 18px; /* Sedikit kecilkan butang */
+            padding: 8px 18px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
@@ -245,7 +239,7 @@
             overflow-x: auto;
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            max-height: 700px; /* Limit height for sticky header */
+            max-height: 700px;
             overflow-y: auto;
         }
 
@@ -263,7 +257,6 @@
             vertical-align: middle;
         }
 
-        /* STICKY HEADER FIX */
         th {
             background-color: #f8f9fa;
             color: #555;
@@ -274,7 +267,7 @@
             cursor: pointer;
             user-select: none;
             white-space: nowrap;
-            position: sticky; /* Make header sticky */
+            position: sticky;
             top: 0;
             z-index: 10;
             box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
@@ -313,7 +306,7 @@
         }
         
         .member-id-input {
-            width: 100px; /* Fixed width */
+            width: 100px;
             text-align: center;
             font-weight: bold;
             color: var(--primary-color);
@@ -322,7 +315,7 @@
         }
 
         .date-input {
-            width: 125px; /* Fixed width */
+            width: 125px;
             font-family: inherit;
             font-size: 0.85em;
         }
@@ -364,15 +357,9 @@
         }
         
         .btn-icon:hover { transform: scale(1.1); }
-
         .btn-check { background-color: var(--success-color); }
-        .btn-check:hover { background-color: #218838; }
-        
         .btn-block { background-color: var(--block-color); }
-        .btn-block:hover { background-color: #c0392b; }
-
         .btn-delete { background-color: #555; }
-        .btn-delete:hover { background-color: #333; }
         
         .btn-reset { 
             background-color: #e0e0e0; 
@@ -382,6 +369,22 @@
             font-size: 0.7em;
         }
         .btn-reset:hover { background-color: #d0d0d0; color: #333; }
+
+        /* Magic Wand Button Style */
+        .btn-magic {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 5px rgba(118, 75, 162, 0.3);
+        }
+        .btn-magic:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(118, 75, 162, 0.4); }
 
         .loader-container {
             text-align: center;
@@ -511,7 +514,11 @@
                     <th onclick="sortTable('ic')" id="th-ic" style="width: 150px;">No. IC <i class="fas fa-sort"></i></th>
                     
                     <th onclick="sortTable('jawatan')" id="th-jawatan">Jawatan <i class="fas fa-sort"></i></th>
-                    <th onclick="sortTable('no_keahlian')" id="th-no_keahlian" style="width: 130px; background-color: #e3f2fd;">No. Keahlian <i class="fas fa-sort"></i></th>
+                    
+                    <th onclick="sortTable('no_keahlian')" id="th-no_keahlian" style="width: 170px; background-color: #e3f2fd;">
+                        No. Keahlian <i class="fas fa-sort"></i>
+                    </th>
+                    
                     <th style="width: 150px; background-color: #e8f5e9;">Tarikh Keahlian</th>
                     <th onclick="sortTable('status')" id="th-status">Status <i class="fas fa-sort"></i></th>
                     <th style="text-align: center; width: 110px;">Tindakan</th>
@@ -544,8 +551,7 @@
     let currentUser = null;
     let allData = []; 
     let currentSort = { key: 'status', order: 'asc' }; 
-    // State Tab Semasa
-    let currentTab = 'pending'; // 'pending' (belum proses) atau 'approved' (disahkan/disekat)
+    let currentTab = 'pending'; 
 
     try {
         const app = initializeApp(firebaseConfig);
@@ -564,9 +570,7 @@
                 document.getElementById('connectionStatus').innerText = "Online";
                 document.getElementById('connectionStatus').style.color = "green";
                 
-                // Set default bulk date to today
                 document.getElementById('bulkDateInput').valueAsDate = new Date();
-                
                 loadData(); 
             }
         });
@@ -580,7 +584,6 @@
 
     window.loadData = async function() {
         if (!db) return;
-        
         const loader = document.getElementById('loader');
         const tbody = document.getElementById('tableBody');
         const table = document.getElementById('dataTable');
@@ -591,9 +594,7 @@
 
         try {
             const querySnapshot = await getDocs(collection(db, 'ppd_registrations'));
-            
             allData = [];
-            
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
                 data.id = doc.id; 
@@ -602,7 +603,6 @@
 
             updateStats(); 
             sortDataArray(allData, currentSort.key, currentSort.order);
-            // Render mengikut tab semasa
             applyFilters();
 
         } catch (error) {
@@ -614,38 +614,27 @@
         }
     }
 
-    // --- FUNGSI TAB BARU ---
+    // --- TAB & FILTER ---
     window.switchTab = function(tabName) {
         currentTab = tabName;
-        
-        // Update butang UI
         document.getElementById('tab-pending').classList.remove('active');
         document.getElementById('tab-approved').classList.remove('active');
         document.getElementById(`tab-${tabName}`).classList.add('active');
-        
-        // Reset checkbox
         document.getElementById('selectAll').checked = false;
-        
-        // Render semula data
         applyFilters();
     }
 
-    // --- FUNGSI PENAPISAN (FILTER) MASTER ---
     window.applyFilters = function() {
         const searchInput = document.getElementById('searchInput').value.toUpperCase();
         
-        // 1. Tapis mengikut Tab
         let filtered = allData.filter(item => {
             if (currentTab === 'pending') {
-                // Tunjuk yang BELUM disahkan (Status != DISAHKAN dan != DISEKAT)
                 return item.status !== 'DISAHKAN' && item.status !== 'DISEKAT';
             } else {
-                // Tunjuk yang SUDAH diproses (DISAHKAN atau DISEKAT)
                 return item.status === 'DISAHKAN' || item.status === 'DISEKAT';
             }
         });
 
-        // 2. Tapis mengikut Carian (Search)
         if (searchInput) {
             filtered = filtered.filter(item => {
                 const name = (item.nama || '').toUpperCase();
@@ -655,7 +644,7 @@
         }
 
         renderTable(filtered);
-        updateBulkButton(); // Reset butang bulk
+        updateBulkButton();
     }
 
     function maskIC(ic) {
@@ -663,20 +652,17 @@
         return ic.substring(0, 6) + '-' + ic.substring(6, 8) + '-****';
     }
     
-    // Global function to toggle IC visibility
     window.toggleIC = function(id, fullIC) {
         const displaySpan = document.getElementById(`ic-display-${id}`);
         const icon = document.getElementById(`ic-icon-${id}`);
         
         if (displaySpan.getAttribute('data-visible') === 'true') {
-            // Sembunyikan semula
             displaySpan.innerText = maskIC(fullIC);
             displaySpan.setAttribute('data-visible', 'false');
             icon.classList.remove('fa-eye-slash');
             icon.classList.add('fa-eye');
             displaySpan.style.color = "#333";
         } else {
-            // Tunjuk Penuh (Formatted)
             const formatted = fullIC.substring(0, 6) + '-' + fullIC.substring(6, 8) + '-' + fullIC.substring(8);
             displaySpan.innerText = formatted;
             displaySpan.setAttribute('data-visible', 'true');
@@ -686,10 +672,13 @@
         }
     }
 
+    // --- LOGIK ID KEAHLIAN AUTO ---
+    // Mencari nombor terakhir dalam DB untuk tahun semasa dan tambah 1
     function getNextMembershipId(year) {
         const currentYear = year || new Date().getFullYear();
         let maxSeq = 0;
         
+        // Loop semua data (pending & approved) untuk elak duplicate
         allData.forEach(item => {
             if (item.no_keahlian && item.no_keahlian.includes('/')) {
                 const parts = item.no_keahlian.split('/');
@@ -703,10 +692,26 @@
         });
         
         const nextSeq = maxSeq + 1;
+        // Format: 0001/2026
         return nextSeq.toString().padStart(4, '0') + '/' + currentYear;
     }
 
-    // 2. Render Jadual
+    // Fungsi Button Magic Wand
+    window.autoGenerateId = async function(docId) {
+        const inputField = document.getElementById(`id-input-${docId}`);
+        const newId = getNextMembershipId();
+        
+        // Update UI
+        if(inputField) {
+            inputField.value = newId;
+            flashInput(inputField);
+        }
+
+        // Simpan terus ke DB
+        await updateMemberId(docId, newId);
+    }
+
+    // --- RENDER JADUAL ---
     function renderTable(dataArray) {
         const tbody = document.getElementById('tableBody');
         tbody.innerHTML = '';
@@ -716,16 +721,15 @@
             return;
         }
 
-        const suggestionId = getNextMembershipId(); 
-
         dataArray.forEach((item) => {
             let statusBadge;
             let actionButtons;
 
+            // Tentukan status badge & button
             if (item.status === 'DISAHKAN') {
                 statusBadge = `<span class="badge badge-approved">DISAHKAN</span>`;
                 actionButtons = `
-                    <button class="btn-icon" style="background:#ccc; cursor:default;" title="Sudah Disahkan"><i class="fas fa-check"></i></button>
+                    <button class="btn-icon" style="background:#ccc; cursor:default;"><i class="fas fa-check"></i></button>
                     <button class="btn-icon btn-block" onclick="blockSingle('${item.id}')" title="Sekat"><i class="fas fa-ban"></i></button>
                     <button class="btn-icon btn-delete" onclick="deleteSingle('${item.id}', '${item.nama}')" title="Hapus"><i class="fas fa-trash"></i></button>
                 `;
@@ -746,7 +750,6 @@
 
             const photoUrl = item.foto_url ? item.foto_url : 'https://via.placeholder.com/50?text=IMG';
             const currentIdVal = item.no_keahlian || '';
-            const placeholderVal = currentIdVal ? '' : suggestionId;
             const joinDateVal = item.membership_date || ''; 
 
             const row = `
@@ -777,13 +780,23 @@
                         ${item.jawatan || '-'}<br>
                         <small style="color:#666;">${item.sektor || '-'}</small>
                     </td>
+                    
                     <td>
-                        <input type="text" class="table-input member-id-input" 
-                               value="${currentIdVal}" 
-                               placeholder="${placeholderVal}"
-                               onchange="updateMemberId('${item.id}', this.value)"
-                               title="Format: 0001/2026">
+                        <div style="display:flex; align-items:center; gap:5px;">
+                            <input type="text" 
+                                   class="table-input member-id-input" 
+                                   id="id-input-${item.id}"
+                                   value="${currentIdVal}" 
+                                   placeholder="0000/20XX"
+                                   onchange="updateMemberId('${item.id}', this.value)"
+                                   title="Format: 0001/2026">
+                            
+                            <button class="btn-magic" onclick="autoGenerateId('${item.id}')" title="Auto Jana ID (Seterusnya)">
+                                <i class="fas fa-magic"></i>
+                            </button>
+                        </div>
                     </td>
+
                     <td>
                         <div style="display:flex; align-items:center; gap:5px;">
                             <input type="date" class="table-input date-input"
@@ -810,12 +823,10 @@
         updateBulkButton();
     }
 
-    // 3. Fungsi Sort
+    // Fungsi Sort
     window.sortTable = function(key) {
-        // Reset Visual Indicator
         document.querySelectorAll('th').forEach(th => th.classList.remove('sort-active'));
         document.getElementById(`th-${key}`).classList.add('sort-active');
-
         if (currentSort.key === key) {
             currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
         } else {
@@ -823,7 +834,7 @@
             currentSort.order = 'asc';
         }
         sortDataArray(allData, currentSort.key, currentSort.order);
-        applyFilters(); // Guna applyFilters untuk kekalkan tab
+        applyFilters(); 
     }
 
     function sortDataArray(arr, key, order) {
@@ -836,7 +847,7 @@
         });
     }
 
-    // 4. Update No. Keahlian
+    // Update No. Keahlian Manual
     window.updateMemberId = async function(docId, newValue) {
         if (!newValue) return; 
         try {
@@ -844,14 +855,16 @@
             await updateDoc(userRef, { no_keahlian: newValue });
             const item = allData.find(i => i.id === docId);
             if (item) item.no_keahlian = newValue;
-            flashInput(document.activeElement);
+            // Jika dipanggil dari onchange manual, flash input
+            const el = document.getElementById(`id-input-${docId}`);
+            if(el) flashInput(el);
         } catch (error) {
             console.error("Gagal:", error);
             alert("Gagal simpan.");
         }
     }
 
-    // 5. Update Tarikh Keahlian (Satu Persatu)
+    // Update Tarikh Keahlian
     window.updateMemberDate = async function(docId, newDate) {
         if (!newDate) return;
         try {
@@ -859,83 +872,63 @@
             await updateDoc(userRef, { membership_date: newDate });
             const item = allData.find(i => i.id === docId);
             if (item) item.membership_date = newDate;
-            flashInput(document.activeElement);
+            flashInput(document.getElementById(`date-${docId}`));
         } catch (error) {
             console.error("Gagal:", error);
             alert("Gagal simpan tarikh.");
         }
     }
 
-    // Fungsi Baru: Reset Tarikh Keahlian
     window.resetMemberDate = async function(docId) {
         if(!confirm("Padam tarikh keahlian ini?")) return;
-        
         try {
             const userRef = doc(db, 'ppd_registrations', docId);
             await updateDoc(userRef, { membership_date: "" });
-            
-            // Update local
             const item = allData.find(i => i.id === docId);
             if (item) item.membership_date = "";
-            
-            // Update UI secara langsung tanpa reload
             const dateInput = document.getElementById(`date-${docId}`);
             if(dateInput) dateInput.value = "";
-            
         } catch (error) {
-            console.error("Gagal reset tarikh:", error);
             alert("Gagal reset tarikh.");
         }
     }
 
-    // 6. Update Tarikh Keahlian (Pukal) - DIPERBAIKI
+    // Bulk Date
     window.bulkUpdateDate = async function() {
         const checkedBoxes = document.querySelectorAll('.select-row:checked');
         const bulkDate = document.getElementById('bulkDateInput').value;
 
         if (checkedBoxes.length === 0) {
-            alert("Sila pilih (tick) sekurang-kurangnya satu ahli dalam jadual.");
+            alert("Sila pilih (tick) sekurang-kurangnya satu ahli.");
             return;
         }
-        
         if (!bulkDate) {
-            alert("Sila pilih tarikh pada kotak 'Tarikh Pukal' di atas dahulu.");
+            alert("Sila pilih tarikh dahulu.");
             return;
         }
-
-        if (!confirm(`Kemaskini tarikh keahlian kepada ${bulkDate} untuk ${checkedBoxes.length} ahli yang dipilih?`)) return;
+        if (!confirm(`Set tarikh ${bulkDate} untuk ${checkedBoxes.length} ahli?`)) return;
 
         const btn = document.getElementById('btnBulkDate');
         const originalText = btn.innerHTML;
         btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
         btn.disabled = true;
 
-        let successCount = 0;
-
         try {
             for (const cb of checkedBoxes) {
                 const docId = cb.value;
                 const userRef = doc(db, 'ppd_registrations', docId);
-                
-                await updateDoc(userRef, {
-                    membership_date: bulkDate
-                });
-                
-                // Update local data
+                await updateDoc(userRef, { membership_date: bulkDate });
                 const item = allData.find(x => x.id === docId);
                 if (item) item.membership_date = bulkDate;
-                
-                successCount++;
             }
-            alert(`Berjaya! Tarikh dikemaskini untuk ${successCount} ahli.`);
-            applyFilters(); // Refresh view
+            alert(`Berjaya!`);
+            applyFilters();
         } catch (error) {
-            console.error("Bulk date error:", error);
-            alert("Berlaku ralat.");
+            console.error(error);
+            alert("Ralat.");
         } finally {
             btn.innerHTML = originalText;
             btn.disabled = false;
-            // Clear selection
             document.getElementById('selectAll').checked = false;
             updateBulkButton();
         }
@@ -952,20 +945,18 @@
         }
     }
 
-    // searchTable telah digantikan dengan applyFilters di atas
-
-    // 6. Verify Single
+    // Verify Single (Auto generate jika kosong)
     window.verifySingle = async function(docId) {
-        if (!confirm("Adakah anda pasti ingin mengesahkan keahlian ini?")) return;
+        if (!confirm("Sahkan keahlian ini?")) return;
         try {
             const userRef = doc(db, 'ppd_registrations', docId);
             const item = allData.find(x => x.id === docId);
             
-            // Auto generate ID if empty
             let updates = { status: "DISAHKAN", verifiedAt: new Date().toISOString() };
             
+            // JANA ID AUTOMATIK JIKA KOSONG
             if (!item.no_keahlian) {
-                const nextId = getNextMembershipId(new Date().getFullYear());
+                const nextId = getNextMembershipId();
                 updates.no_keahlian = nextId;
                 item.no_keahlian = nextId; 
             }
@@ -979,43 +970,35 @@
             await updateDoc(userRef, updates);
             item.status = "DISAHKAN";
             
-            alert("Permohonan berjaya disahkan!");
+            alert("Berjaya disahkan!");
             applyFilters(); 
             updateStats();
         } catch (error) {
-            console.error("Error verifying:", error);
-            alert("Gagal mengesahkan.");
+            console.error(error);
+            alert("Gagal.");
         }
     }
 
     window.blockSingle = async function(docId) {
-        if (!confirm("Adakah anda pasti ingin MENYEKAT permohonan ini?")) return;
+        if (!confirm("Sekat permohonan ini?")) return;
         try {
             const userRef = doc(db, 'ppd_registrations', docId);
             await updateDoc(userRef, { status: "DISEKAT", blockedAt: new Date().toISOString() });
             const item = allData.find(x => x.id === docId);
             if (item) item.status = "DISEKAT";
-            alert("Permohonan berjaya disekat.");
             applyFilters(); 
             updateStats();
-        } catch (error) {
-            console.error("Error blocking:", error);
-            alert("Gagal menyekat.");
-        }
+        } catch (error) { alert("Gagal."); }
     }
 
     window.deleteSingle = async function(docId, name) {
-        if (!confirm(`AMARAN: Adakah anda pasti ingin memadam rekod ${name}?`)) return;
+        if (!confirm(`Padam rekod ${name}?`)) return;
         try {
             await deleteDoc(doc(db, 'ppd_registrations', docId));
             allData = allData.filter(x => x.id !== docId);
             applyFilters();
             updateStats();
-            alert("Rekod berjaya dipadam.");
-        } catch (error) {
-            console.error("Error deleting:", error);
-            alert("Gagal memadam rekod.");
-        }
+        } catch (error) { alert("Gagal."); }
     }
 
     window.toggleSelectAll = function() {
@@ -1029,59 +1012,51 @@
         const checkedBoxes = document.querySelectorAll('.select-row:checked');
         const btn = document.getElementById('btnBulkApprove');
         const countSpan = document.getElementById('selectedCount');
-        
-        const count = checkedBoxes.length;
-        countSpan.innerText = count;
-        
-        btn.disabled = count === 0;
+        countSpan.innerText = checkedBoxes.length;
+        btn.disabled = checkedBoxes.length === 0;
     }
 
     window.bulkApprove = async function() {
         const checkedBoxes = document.querySelectorAll('.select-row:checked');
         if (checkedBoxes.length === 0) return;
-
-        if (!confirm(`Sahkan ${checkedBoxes.length} permohonan terpilih?`)) return;
+        if (!confirm(`Sahkan ${checkedBoxes.length} permohonan?`)) return;
 
         const btn = document.getElementById('btnBulkApprove');
-        const originalText = btn.innerHTML;
         btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Memproses...`;
         btn.disabled = true;
 
         let successCount = 0;
         
-        // Find current max seq for ID generation
-        let currentNextIdSeq = 0;
-        const currentYear = new Date().getFullYear();
-        allData.forEach(item => {
-            if (item.no_keahlian && item.no_keahlian.includes('/' + currentYear)) {
-                const seq = parseInt(item.no_keahlian.split('/')[0], 10);
-                if (seq > currentNextIdSeq) currentNextIdSeq = seq;
-            }
-        });
-
         try {
+            // Pre-calculate next ID base untuk bulk
+            // Kita perlu tahu nombor terakhir SEKARANG sebelum loop bermula
+            let currentYear = new Date().getFullYear();
+            let maxSeq = 0;
+             allData.forEach(item => {
+                if (item.no_keahlian && item.no_keahlian.includes('/' + currentYear)) {
+                    const seq = parseInt(item.no_keahlian.split('/')[0], 10);
+                    if (seq > maxSeq) maxSeq = seq;
+                }
+            });
+
             for (const cb of checkedBoxes) {
                 const docId = cb.value;
                 const userRef = doc(db, 'ppd_registrations', docId);
                 const item = allData.find(x => x.id === docId);
                 
                 if (item && item.status !== 'DISAHKAN') {
-                    let updates = {
-                        status: "DISAHKAN",
-                        verifiedAt: new Date().toISOString()
-                    };
+                    let updates = { status: "DISAHKAN", verifiedAt: new Date().toISOString() };
                     
                     if (!item.no_keahlian) {
-                        currentNextIdSeq++;
-                        const newId = currentNextIdSeq.toString().padStart(4, '0') + '/' + currentYear;
+                        maxSeq++; // Increment tempatan
+                        const newId = maxSeq.toString().padStart(4, '0') + '/' + currentYear;
                         updates.no_keahlian = newId;
                         item.no_keahlian = newId;
                     }
                     
                     if (!item.membership_date) {
-                         const today = new Date().toISOString().slice(0,10);
-                         updates.membership_date = today;
-                         item.membership_date = today;
+                         updates.membership_date = new Date().toISOString().slice(0,10);
+                         item.membership_date = updates.membership_date;
                     }
 
                     await updateDoc(userRef, updates);
@@ -1089,14 +1064,14 @@
                     successCount++;
                 }
             }
-            alert(`Proses selesai! ${successCount} permohonan telah disahkan.`);
+            alert(`Selesai! ${successCount} disahkan.`);
             applyFilters();
             updateStats();
         } catch (error) {
-            console.error("Bulk error:", error);
-            alert("Berlaku ralat semasa proses pukal.");
+            console.error(error);
+            alert("Ralat bulk.");
         } finally {
-            btn.innerHTML = originalText;
+            btn.innerHTML = `<i class="fas fa-check-double"></i> Sahkan (<span id="selectedCount">0</span>)`;
             btn.disabled = false;
             document.getElementById('selectAll').checked = false;
             updateBulkButton();
@@ -1104,44 +1079,19 @@
     }
 
     window.downloadExcel = function() {
-        if (allData.length === 0) {
-            alert("Tiada data untuk dimuat turun.");
-            return;
-        }
+        if (allData.length === 0) { alert("Tiada data."); return; }
         const exportData = allData.map(item => ({
-            "Nama Penuh": item.nama || "",
-            "No. IC": item.ic || "", 
-            "Jantina": item.jantina || "",
-            "Tarikh Lahir": item.dob || "",
-            "Status Perkahwinan": item.status_kahwin || "",
-            "Sektor": item.sektor || "",
-            "Unit": item.unit || "",
-            "Jawatan": item.jawatan || "",
-            "Tarikh Lapor Diri": item.tarikh_mula || "",
-            "Tempoh Khidmat": item.tempoh_khidmat || "",
-            "Tempoh Keahlian Club": item.tempoh_keahlian_club || "",
-            "No. Telefon": item.phone || "",
-            "No. Keahlian": item.no_keahlian || "",
-            "Tarikh Keahlian": item.membership_date || "",
-            "Status": item.status || "",
-            "Foto URL": item.foto_url || ""
+            "Nama": item.nama, "IC": item.ic, "Jawatan": item.jawatan, 
+            "No. Keahlian": item.no_keahlian, "Status": item.status 
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
-        const wscols = [
-            {wch: 30}, {wch: 15}, {wch: 10}, {wch: 15}, {wch: 15},
-            {wch: 25}, {wch: 15}, {wch: 25}, {wch: 15}, {wch: 20},
-            {wch: 20}, {wch: 15}, {wch: 15}, {wch: 15}, {wch: 10}, {wch: 30}
-        ];
-        ws['!cols'] = wscols;
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Senarai Ahli");
-        XLSX.writeFile(wb, `Senarai_Ahli_PPD_Club_${new Date().toISOString().slice(0,10)}.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, "Ahli");
+        XLSX.writeFile(wb, "Ahli_PPD.xlsx");
     }
 
     function updateStats() {
-        let pending = 0;
-        let approved = 0;
-        let blocked = 0;
+        let pending = 0, approved = 0, blocked = 0;
         allData.forEach(item => {
             if (item.status === 'DISAHKAN') approved++;
             else if (item.status === 'DISEKAT') blocked++;
@@ -1151,8 +1101,6 @@
         document.getElementById('pendingCount').innerText = pending;
         document.getElementById('approvedCount').innerText = approved;
         document.getElementById('blockedCount').innerText = blocked;
-
-        // Update badge pada tab
         document.getElementById('count-badge-pending').innerText = pending;
         document.getElementById('count-badge-approved').innerText = approved + blocked;
     }
